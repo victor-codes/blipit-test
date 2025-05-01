@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { Suspense } from "react";
-import { Toaster } from "sonner";
+import { DashboardContextProvider } from "@/contexts/dashboardContext";
 import { QueryProvider } from "@/contexts/queryClient";
 import { siteConfig } from "@/lib/meta";
-import { DashboardContextProvider } from "@/contexts/dashboardContext";
+import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
+import { Toaster } from "sonner";
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -106,9 +106,10 @@ export const metadata: Metadata = {
       },
     ],
   },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };

@@ -1,14 +1,13 @@
 "use client";
-import { getUser } from "@/services/auth";
+
+import { getUser } from "@/services/user";
+import { IUser } from "@/types/auth";
 import { useQuery } from "@tanstack/react-query";
 import { createContext, useContext, useEffect, useState } from "react";
 
 interface DashboardContextState {
   isInitializing: boolean;
-  user: {
-    first_name?: string;
-    last_name?: string;
-  } | null;
+  user: IUser | null;
   updateState: (data: Partial<DashboardContextState>) => void;
 }
 
@@ -26,7 +25,11 @@ export const DashboardContextProvider = (
 ) => {
   const [state, setState] = useState<DashboardContextState>(intitalState);
 
-  const { data: profileData, isLoading } = useQuery({
+  const {
+    data: profileData,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["user"],
     queryFn: getUser,
   });
@@ -45,12 +48,21 @@ export const DashboardContextProvider = (
         user: profileData,
       });
     }
+
+    if (error) {
+      console.log(error);
+
+      // updateState({
+      //   isInitializing: false,
+      //   user: null,
+      // });
+    }
   }, [profileData, isLoading]);
 
   return (
-    <DashboardContext.Provider value={{ ...state, updateState }}>
+    <DashboardContext value={{ ...state, updateState }}>
       {props.children}
-    </DashboardContext.Provider>
+    </DashboardContext>
   );
 };
 

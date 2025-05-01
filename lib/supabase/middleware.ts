@@ -2,13 +2,10 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 const PUBLIC_PATHS = [
-  // "/auth",
   "/auth/login",
   "/api/auth/signup",
   "/api/auth/signin",
-  "/api/auth/signout",
   "/api/auth/signin/confirm-otp",
-  // "/api/auth/sessions/update-activity",
 ];
 
 export async function updateSession(request: NextRequest) {
@@ -49,10 +46,11 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (
-    !user &&
-    !PUBLIC_PATHS.some((path) => request.nextUrl.pathname.startsWith(path))
-  ) {
+  const isPUBLIC_PATH = PUBLIC_PATHS.some((path) =>
+    request.nextUrl.pathname.startsWith(path)
+  );
+
+  if (!user && !isPUBLIC_PATH) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
     url.pathname = "/auth/login";

@@ -1,101 +1,155 @@
 "use client";
 
-import type React from "react";
-
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
+import {
+  Form,
+  FormAction,
+  FormColumn,
+  FormDesc,
+  FormHeader,
+  FormTitle,
+  FormWrapper,
+} from "@/components/ui/form-blocks";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
-import { Goback } from "@/components/ui/go-back";
+import { NumberInput } from "@/components/ui/number-input";
+import { useDashboard } from "@/contexts/dashboardContext";
+import { useWallets } from "@/contexts/wallets-context";
+import { AMOUNT_PRECISION } from "@/lib/contants";
+import { balanceFormatter, generateReference } from "@/lib/utils";
+import { withdrawSchema } from "@/lib/validationSchema/client";
+import { withdrawToWallet } from "@/services/wallets";
+import { DepositFormData } from "@/types/wallet";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export default function WithdrawFunds() {
   const router = useRouter();
-  const { toast } = useToast();
-  const [amount, setAmount] = useState("");
-  const [destination, setDestination] = useState("existing");
+  const { user } = useDashboard();
+
+  const { wallet, refetchWallets } = useWallets();
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, isValid, isDirty },
+  } = useForm<DepositFormData>({
+    resolver: zodResolver(withdrawSchema(wallet?.balance! / AMOUNT_PRECISION)),
+  });
+
+  const { mutate: withdraw, isPending } = useMutation({
+    mutationFn: withdrawToWallet,
+    onSuccess: () => {
+      toast.success(`Withdrawal successful!`);
+      refetchWallets();
+      router.push("/");
+    },
+    onError: (error) => {
+      toast.error(`Deposit failed ${error.message}`);
+    },
+  });
 
   // Generate a reference number
-  const reference = `WDR-${new Date()
-    .toISOString()
-    .slice(0, 10)
-    .replace(/-/g, "")}-XYZ`;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = (data: DepositFormData) => {
+    const reference = generateReference("wdr");
 
-    // Process withdrawal (this would connect to your backend)
-    toast({
-      title: "Withdrawal initiated!",
-      description: `-$${amount}`,
-    });
-
-    // Navigate back to dashboard
-    router.push("/dashboard");
+    const payload = {
+      amount: data.amount,
+      precision: AMOUNT_PRECISION,
+      reference: reference,
+      description: data.description || "Withdrawal from wallet",
+      source: user?.wallet_id!,
+      destination: "@WorldUSD",
+      currency: "USD",
+      meta_data: {
+        transaction_type: "withdrawal",
+        channel: "bank_transfer",
+      },
+    };
+    withdraw(payload);
   };
 
   return (
     <>
       <div>
-        <Goback />
-        <div className="space-y-8">
-          <div>
-            <h3 className="text-xl font-medium">Withdraw</h3>
-          </div>
+        {/* <Goback /> */}
+        <FormWrapper className="space-y-8">
+          <FormHeader>
+            <FormTitle>Withdraw</FormTitle>
+            <FormDesc>
+              Your wallet balance is{" "}
+              {balanceFormatter(wallet?.balance! / AMOUNT_PRECISION || 0)}
+            </FormDesc>
+          </FormHeader>
 
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="amount">Amount</Label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2">
-                    $
-                  </span>
-                  <Input
-                    id="amount"
-                    type="number"
-                    placeholder="0.00"
-                    className="pl-8"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    required
+          <Form onSubmit={handleSubmit(onSubmit)}>
+            <FormColumn>
+              <Label htmlFor="amount">Amount</Label>
+              <Controller
+                name="amount"
+                control={control}
+                rules={{
+                  required: "Amount is required",
+                  validate: (val) => val > 0 || "Amount must be greater than 0",
+                }}
+                render={({ field }) => (
+                  <NumberInput
+                    value={field.value}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/,/g, "");
+                      const parsed = parseFloat(raw);
+                      field.onChange(isNaN(parsed) ? 0 : parsed);
+                    }}
+                    aria-invalid={errors.amount ? "true" : "false"}
                   />
-                </div>
-              </div>
+                )}
+              />
+              {errors.amount && (
+                <p className="text-sm text-destructive mt-1">
+                  {errors.amount.message}
+                </p>
+              )}
+            </FormColumn>
 
-              <div className="space-y-2">
-                <Label htmlFor="destination">Destination</Label>
-                <Select value={destination} onValueChange={setDestination}>
-                  <SelectTrigger id="destination">
-                    <SelectValue placeholder="Select destination" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="existing">
-                      My Bank Account (****1234)
-                    </SelectItem>
-                    <SelectItem value="new">Add New Bank Account</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            {/* <FormColumn>
+              <Label htmlFor="destination">Destination</Label>
+              <Select value={destination} onValueChange={setDestination}>
+                <SelectTrigger id="destination">
+                  <SelectValue placeholder="Select destination" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="existing">
+                    My Bank Account (****1234)
+                  </SelectItem>
+                  <SelectItem value="new">Add New Bank Account</SelectItem>
+                </SelectContent>
+              </Select>
+            </FormColumn> */}
 
-              <div className="space-y-2">
-                <Label htmlFor="reference">Reference</Label>
-                <Input id="reference" value={reference} readOnly />
-              </div>
-            </div>
+            <FormColumn>
+              <Label htmlFor="description">Description</Label>
+              <Input
+                id="description"
+                placeholder="Salary, gift, etc."
+                {...register("description")}
+                aria-invalid={errors.description ? "true" : "false"}
+              />
+            </FormColumn>
 
-            <div className="flex flex-col space-y-4">
-              <Button type="submit" className="w-full">
+            <FormAction>
+              <Button
+                type="submit"
+                className="w-full"
+                isLoading={isPending}
+                disabled={!isValid || !isDirty || isPending}
+              >
                 Confirm Withdrawal
               </Button>
               <Button
@@ -106,9 +160,9 @@ export default function WithdrawFunds() {
               >
                 Cancel
               </Button>
-            </div>
-          </form>
-        </div>
+            </FormAction>
+          </Form>
+        </FormWrapper>
       </div>
     </>
   );

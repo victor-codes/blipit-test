@@ -10,7 +10,7 @@ export function withAuth<P extends object>(
     const router = useRouter();
 
     useEffect(() => {
-      if (!isInitializing && user && !user.first_name && !user.last_name) {
+      if (!isInitializing && user && !user.completed_setup) {
         router.push("/setup");
       }
     }, [user, isInitializing, router]);

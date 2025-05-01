@@ -1,10 +1,9 @@
-import { AUTH_STEP, AUTH_FLOW } from "@/lib/utils";
-import { User } from "@supabase/supabase-js";
+import { Database } from "@/database.types";
+import { AUTH_FLOW } from "@/lib/utils";
 import {
   FieldErrors,
-  UseFormRegister,
-  UseFormSetValue,
   UseFormHandleSubmit,
+  UseFormRegister,
   UseFormReset,
 } from "react-hook-form";
 
@@ -16,9 +15,17 @@ export type FormDataValues = {
 };
 
 export type UpdateUserFormDataValues = {
-  // phone: string;
-  first_name: string;
   last_name: string;
+  first_name: string;
+  phone_number: string;
+  date_of_birth: Date;
+  nationality: string;
+  gender: string;
+  street: string;
+  post_code: string;
+  city: string;
+  state: string;
+  country: string;
 };
 
 export type FormAuthProps = {
@@ -37,4 +44,4 @@ export type OTPAuthProps = {
   back: () => void;
 };
 
-export type IUser = User;
+export type IUser = Database["public"]["Tables"]["profiles"]["Row"];

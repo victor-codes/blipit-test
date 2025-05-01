@@ -1,14 +1,20 @@
 "use client";
-import Link from "next/link";
 import { withAuth } from "@/components/hoc/withAuth";
+import Link from "next/link";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Minus, CreditCard, Activity } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useDashboard } from "@/contexts/dashboardContext";
+import { useWallets } from "@/contexts/wallets-context";
+import { AMOUNT_PRECISION } from "@/lib/contants";
+import { balanceFormatter } from "@/lib/utils";
+import { Activity, CreditCard, Minus, Plus } from "lucide-react";
 
 function Dashboard() {
   const { user } = useDashboard();
+
+  const { wallet, fetchingWallets } = useWallets();
 
   return (
     <>
@@ -28,7 +34,13 @@ function Dashboard() {
 
           <CardContent>
             <div className="flex flex-col space-y-6">
-              <p className="text-4xl font-bold">$1,250.00 USD</p>
+              {fetchingWallets ? (
+                <Skeleton className="h-10" />
+              ) : (
+                <p className="text-4xl font-bold">
+                  {balanceFormatter(wallet?.balance! / AMOUNT_PRECISION)}
+                </p>
+              )}
               <div className="flex space-x-2">
                 <Button size="lg" asChild className="flex-1">
                   <Link href="/deposit">
