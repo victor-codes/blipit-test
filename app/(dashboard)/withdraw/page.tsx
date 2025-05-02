@@ -18,7 +18,7 @@ import { Label } from "@/components/ui/label";
 import { NumberInput } from "@/components/ui/number-input";
 import { useDashboard } from "@/contexts/dashboardContext";
 import { useWallets } from "@/contexts/wallets-context";
-import { AMOUNT_PRECISION } from "@/lib/contants";
+import { AMOUNT_PRECISION, APP_CURRENCY } from "@/lib/contants";
 import { balanceFormatter, generateReference } from "@/lib/utils";
 import { withdrawSchema } from "@/lib/validationSchema/client";
 import { withdrawToWallet } from "@/services/wallets";
@@ -67,7 +67,7 @@ export default function WithdrawFunds() {
       description: data.description || "Withdrawal from wallet",
       source: user?.wallet_id!,
       destination: "@WorldUSD",
-      currency: "USD",
+      currency: APP_CURRENCY,
       meta_data: {
         transaction_type: "withdrawal",
         channel: "bank_transfer",

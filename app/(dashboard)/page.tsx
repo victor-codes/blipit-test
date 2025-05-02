@@ -2,6 +2,7 @@
 import { withAuth } from "@/components/hoc/withAuth";
 import Link from "next/link";
 
+import { RecentTransactions } from "@/components/sections/home/recent-transactions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -9,7 +10,8 @@ import { useDashboard } from "@/contexts/dashboardContext";
 import { useWallets } from "@/contexts/wallets-context";
 import { AMOUNT_PRECISION } from "@/lib/contants";
 import { balanceFormatter } from "@/lib/utils";
-import { Activity, CreditCard, Minus, Plus } from "lucide-react";
+import { Minus, Plus, Wallet } from "lucide-react";
+import { Suspense } from "react";
 
 function Dashboard() {
   const { user } = useDashboard();
@@ -23,7 +25,6 @@ function Dashboard() {
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Hello, {user!.first_name}!</h1>
         </div>
-
         {/* Balance Card */}
         <Card className="w-full gap-y-2">
           <CardHeader>
@@ -50,7 +51,7 @@ function Dashboard() {
                 </Button>
                 <Button size="lg" asChild variant="outline" className="flex-1">
                   <Link href="/withdraw">
-                    <Minus className="mr-2 h-4 w-4" />
+                    <Wallet className="mr-2 h-4 w-4" />
                     Withdraw
                   </Link>
                 </Button>
@@ -58,28 +59,9 @@ function Dashboard() {
             </div>
           </CardContent>
         </Card>
-
-        {/* Quick Actions */}
-        <div className="space-y-3">
-          <h2 className="text-lg font-semibold">Quick Actions</h2>
-          <div className="grid grid-cols-2 gap-3">
-            <Link
-              href="/create-card-wallet"
-              className="flex flex-col items-center justify-center border rounded-md py-4 shadow-xs"
-            >
-              <CreditCard className="h-8 w-8 mb-2" />
-              Create Card Wallet
-            </Link>
-
-            <Link
-              href="/activity"
-              className="flex flex-col items-center justify-center border rounded-md py-4 shadow-xs"
-            >
-              <Activity className="h-8 w-8 mb-2" />
-              View Transactions
-            </Link>
-          </div>
-        </div>
+        <Suspense fallback={<Skeleton className="h-10" />}>
+          <RecentTransactions />
+        </Suspense>
       </div>
     </>
   );

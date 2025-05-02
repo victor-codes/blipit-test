@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { APP_CURRENCY } from "./contants";
+import { Home, CreditCard, Activity, Settings } from "lucide-react";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -33,6 +34,18 @@ export const balanceFormatter = (value: number) => {
   }).format(value);
 };
 
+export const formatDate = (timestamp: number): string => {
+  const date: Date = new Date(timestamp * 1000); // Convert seconds to milliseconds
+
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  };
+
+  return date.toLocaleDateString("en-US", options);
+};
+
 export const generateReference = (type: "dep" | "wdr") =>
   `${type}-${crypto.randomUUID()}`;
 
@@ -48,3 +61,10 @@ export const maskedPhoneNumber = (phone: string) => {
 
   return formatted;
 };
+
+export const NAVIGATION_LIST = [
+  { icon: Home, label: "Home", href: "/" },
+  { icon: CreditCard, label: "Cards", href: "/cards" },
+  { icon: Activity, label: "Activity", href: "/activity" },
+  { icon: Settings, label: "Settings", href: "/settings" },
+];

@@ -1,5 +1,6 @@
 import { depositSchema } from "@/lib/validationSchema/client";
 import { CreateLedgerBalanceResp } from "@blnkfinance/blnk-typescript/dist/src/types/ledgerBalances";
+import { CreateTransactionResponse } from "@blnkfinance/blnk-typescript/dist/src/types/transactions";
 import { z } from "zod";
 
 export type DepositFormData = z.infer<typeof depositSchema>;
@@ -22,3 +23,18 @@ export type ATDeposit = {
 };
 
 export type ATWithdrawal = Omit<ATDeposit, "allow_overdraft">;
+
+export type TransactionsItem = CreateTransactionResponse<TransactionMetaData>;
+
+export type TransactionMetaData = {
+  transaction_type: TransactionType;
+  channel: TransactionChannel;
+  [key: string]: string;
+};
+export type TransactionType =
+  | "deposit"
+  | "withdrawal"
+  | "transfer"
+  | "internal_transfer";
+
+export type TransactionChannel = "bank_transfer" | "card";

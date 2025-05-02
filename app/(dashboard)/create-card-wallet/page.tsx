@@ -40,17 +40,17 @@ export default function CreateCardWallet() {
 
     // Create card wallet (this would connect to your backend)
     // Then navigate to fund card wallet
-    router.push("/dashboard/fund-card-wallet");
+    router.push("/fund-card-wallet");
   };
 
   return (
     <>
       <div>
-        <Goback />
+        {/* <Goback /> */}
 
         <FormWrapper>
           <FormHeader>
-            <FormTitle>Set Up a New Card Wallet</FormTitle>
+            <FormTitle>Set Up a New Card</FormTitle>
           </FormHeader>
 
           <Form onSubmit={handleSubmit}>

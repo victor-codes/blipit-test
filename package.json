@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "supa:typegen": "supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > database.types.ts"
+    "typegen": "node scripts/typegen.ts"
   },
   "dependencies": {
     "@blnkfinance/blnk-typescript": "^1.0.2",
@@ -26,6 +26,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
+    "cross-env": "^7.0.3",
     "date-fns": "^4.1.0",
     "i18n-iso-countries": "^7.14.0",
     "input-otp": "^1.4.2",

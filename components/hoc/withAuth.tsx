@@ -1,3 +1,4 @@
+"use client";
 import { useDashboard } from "@/contexts/dashboardContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";

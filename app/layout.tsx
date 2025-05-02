@@ -26,10 +26,10 @@ export default function RootLayout({
     <QueryProvider>
       <html lang="en">
         <body
-          className={`${geistSans.className} ${geistMono.variable} antialiased`}
+          className={`${geistSans.className} ${geistMono.variable} min-h-dvh antialiased`}
         >
           <DashboardContextProvider>
-            <main>{children}</main>
+            <div className="h-dvh">{children}</div>
           </DashboardContextProvider>
           <Suspense fallback={null}>
             <Toaster position="top-center" richColors />

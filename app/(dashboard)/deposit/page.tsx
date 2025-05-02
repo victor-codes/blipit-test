@@ -30,6 +30,7 @@ export default function DepositFunds() {
   const router = useRouter();
   const { user } = useDashboard();
   const { refetchWallets } = useWallets();
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -46,6 +47,9 @@ export default function DepositFunds() {
     onSuccess: () => {
       toast.success(`Cha ching deposit successful!🤑`);
       refetchWallets();
+      queryClient.invalidateQueries({
+        queryKey: ["recent-transactions", "transactions"],
+      });
       router.push("/");
     },
     onError: (error) => {
@@ -66,6 +70,7 @@ export default function DepositFunds() {
       currency: "USD",
       allow_overdraft: true,
       meta_data: {
+        // title: "Deposit to Main Wallet",
         transaction_type: "deposit",
         channel: "bank_transfer",
       },

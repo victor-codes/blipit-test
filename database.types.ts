@@ -65,6 +65,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          card_id: string | null
           completed_setup: boolean
           created_at: string
           email: string
@@ -77,6 +78,7 @@ export type Database = {
           wallet_id: string | null
         }
         Insert: {
+          card_id?: string | null
           completed_setup?: boolean
           created_at?: string
           email: string
@@ -89,6 +91,7 @@ export type Database = {
           wallet_id?: string | null
         }
         Update: {
+          card_id?: string | null
           completed_setup?: boolean
           created_at?: string
           email?: string
