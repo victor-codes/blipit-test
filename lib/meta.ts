@@ -1,7 +1,7 @@
 export const siteConfig = {
-  name: "",
+  name: "blipIt",
   title: "BlipIt",
-  description: "",
+  description: "Wallet management made easy",
   default_image: "",
   url: "https:ayovictor.dev",
   theme_color: "",

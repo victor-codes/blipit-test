@@ -7,16 +7,16 @@ import {
   FormWrapper,
 } from "@/components/ui/form-blocks";
 import { Input } from "@/components/ui/input";
-import { siteConfig } from "@/lib/meta";
 import { AUTH_FLOW, AUTH_STEP } from "@/lib/contants";
+import { siteConfig } from "@/lib/meta";
 import { createUser, signInUser } from "@/services/auth";
 import { FormAuthProps, FormDataValues } from "@/types/auth";
 import { useMutation } from "@tanstack/react-query";
 import { XIcon } from "lucide-react";
+import { LayoutGroup, motion } from "motion/react";
 import { useCallback, useState } from "react";
 import { SubmitHandler } from "react-hook-form";
 import { toast } from "sonner";
-import { LayoutGroup, motion } from "motion/react";
 
 export const FormAuth = ({
   // errors,
@@ -124,10 +124,10 @@ export const FormAuth = ({
 
               {step === AUTH_STEP.DETAILS && (
                 <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
+                  initial={{ y: -28, scale: 0.8, opacity: 0 }}
+                  animate={{ y: 0, scale: 1, opacity: 1 }}
                   layout="position"
-                  className="relative"
+                  className="relative origin-center"
                   transition={SPRING}
                 >
                   <span className="absolute leading-none mt-[0.5px] text-lg top-1/2 transform -translate-y-1/2 left-3">
@@ -143,27 +143,35 @@ export const FormAuth = ({
               )}
 
               <FormAction>
-                <MotionFormButton
+                <motion.div
                   layout
                   transition={SPRING}
-                  disabled={isPending || isSignInPending || isDisabled}
-                  isLoading={isPending || isSignInPending}
-                  type="submit"
-                  className="w-full"
+                  className="h-14 w-full relative z-10"
                 >
-                  {btnText()}
-                </MotionFormButton>
+                  <Button
+                    disabled={isPending || isSignInPending || isDisabled}
+                    isLoading={isPending || isSignInPending}
+                    type="submit"
+                    className="w-full"
+                  >
+                    {btnText()}
+                  </Button>
+                </motion.div>
+
+                {!isExistingUser && step === AUTH_STEP.DETAILS && (
+                  <motion.div
+                    layout
+                    animate={{ opacity: 1 }}
+                    initial={{ opacity: 0 }}
+                    exit={{ opacity: 0 }}
+                    transition={SPRING}
+                  >
+                    <p className="relative z-[1] text-center text-sm text-accent-foreground animate-in">
+                      By continuing, you agree to the Terms and Privacy Policy.
+                    </p>
+                  </motion.div>
+                )}
               </FormAction>
-              {!isExistingUser && step === AUTH_STEP.DETAILS && (
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={SPRING}
-                  className="text-center text-sm text-accent-foreground"
-                >
-                  By continuing, you agree to the Terms and Privacy Policy.
-                </motion.p>
-              )}
             </MotionForm>
           </LayoutGroup>
         </FormWrapper>
@@ -172,7 +180,6 @@ export const FormAuth = ({
   );
 };
 
-const MotionFormButton = motion.create(Button);
 const MotionForm = motion.create(Form);
 
 const SPRING = {
