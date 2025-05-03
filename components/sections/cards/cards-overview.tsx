@@ -1,8 +1,8 @@
 "use client";
 import { useDashboard } from "@/contexts/dashboard-context";
-import { ViewCard } from "./view-card";
-import { NoCards } from "./no-cards";
 import { CARDS_SECTION } from "@/lib/contants";
+import { NoCards } from "./no-cards";
+import { ViewCard } from "./view-card";
 
 type CardsOverViewProps = {
   updateSection: (section: CARDS_SECTION) => void;

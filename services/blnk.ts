@@ -1,7 +1,5 @@
-// import { BlnkInit } from "@blnkfinance/blnk-typescript";
 import { Blnk } from "@blnkfinance/blnk-typescript/dist/src/blnk/endpoints/baseBlnkClient";
 import { BlnkInit } from "@blnkfinance/blnk-typescript";
-import { getExpiryDateAdd3Years } from "@/lib/utils";
 
 let blnkInstance: Blnk | null = null;
 
@@ -13,24 +11,6 @@ export async function getBlnkInstance() {
   }
   return blnkInstance;
 }
-
-// async function createCustomerLedger() {
-//   const blnk = await getBlnkInstance();
-//   const { Ledgers } = blnk;
-
-//   const customerLedger = await Ledgers.create({
-//     name: "Customer Wallets Ledger",
-//     meta_data: {
-//       description: "Ledger for managing customer wallets",
-//       application: "BlipIt Wallet System",
-//     },
-//   });
-
-//   if (!customerLedger.data) throw new Error("Failed to create customer ledger");
-
-//   console.log("Customer Ledger created:", customerLedger.data!.ledger_id);
-//   return customerLedger.data!.ledger_id;
-// }
 
 interface CustomerData {
   firstName: string;
@@ -115,6 +95,7 @@ export async function createCardWallet(
   meta_data: { [key: string]: string }
 ) {
   const blnk = await getBlnkInstance();
+
   const { LedgerBalances } = blnk;
 
   const cardWallet = await LedgerBalances.create({
@@ -125,10 +106,10 @@ export async function createCardWallet(
       wallet_type: "card",
       purpose: "card_payments",
       status: "active",
-      ...meta_data,
+      nick_name: meta_data.nick_name,
       card_details: {
-        masked_number: "xxxx-xxxx-xxxx-1234",
-        expiry: getExpiryDateAdd3Years(),
+        masked_number: meta_data.masked_number,
+        expiry: meta_data.expiry_date,
         type: "virtual",
       },
     },

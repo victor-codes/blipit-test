@@ -3,13 +3,13 @@ import { AUTH_FLOW } from "@/lib/contants";
 import {
   existingUserSchema,
   newUserSchema,
-} from "@/lib/validationSchema/client";
+} from "@/lib/validation-schema/client";
 import { FormDataValues } from "@/types/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { FormAuth } from "./form-auth";
-import { OTPAuth } from "./otp-auth";
+import { FormAuth } from "../components/sections/auth/form-auth";
+import { OTPAuth } from "../components/sections/auth/otp-auth";
 
 export default function AuthPage() {
   const [flow, setFlow] = useState<AUTH_FLOW>(AUTH_FLOW.FORM);

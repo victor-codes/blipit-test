@@ -1,4 +1,8 @@
-import { createCardSchema, depositSchema } from "@/lib/validationSchema/client";
+import { Database } from "@/database.types";
+import {
+  createCardSchema,
+  depositSchema,
+} from "@/lib/validation-schema/client";
 import { CreateLedgerBalanceResp } from "@blnkfinance/blnk-typescript/dist/src/types/ledgerBalances";
 import { CreateTransactionResponse } from "@blnkfinance/blnk-typescript/dist/src/types/transactions";
 import { z } from "zod";
@@ -45,3 +49,13 @@ export type TransactionType =
   | "internal_transfer";
 
 export type TransactionChannel = "bank_transfer" | "card";
+
+export type CardDetailsType = Omit<
+  Database["public"]["Tables"]["cards"]["Row"],
+  "created_at" | "id"
+>;
+
+export type GetCardDetailsRes = {
+  message: string;
+  details: CardDetailsType;
+};

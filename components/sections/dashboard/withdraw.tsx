@@ -22,7 +22,7 @@ import {
   DASHBOARD_SECTION,
 } from "@/lib/contants";
 import { balanceFormatter, generateReference } from "@/lib/utils";
-import { withdrawSchema } from "@/lib/validationSchema/client";
+import { withdrawSchema } from "@/lib/validation-schema/client";
 import { withdrawToWallet } from "@/services/wallets";
 import { DepositFormData } from "@/types/wallet";
 import { zodResolver } from "@hookform/resolvers/zod";

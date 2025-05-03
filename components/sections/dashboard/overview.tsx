@@ -9,9 +9,9 @@ import { Plus, Wallet } from "lucide-react";
 import { Suspense } from "react";
 
 import { Button } from "@/components/ui/button";
-import { RecentTransactions } from "../home/recent-transactions";
-import Link from "next/link";
 import { TransactionsLoading } from "@/components/ui/transaction-item";
+import Link from "next/link";
+import { RecentTransactions } from "../home/recent-transactions";
 
 type OverviewProps = {
   updateSection: (section: DASHBOARD_SECTION) => void;

@@ -3,12 +3,10 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
 export default async function LoginPage() {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await (await supabase).auth.getUser();
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
 
-  if (!user) {
+  if (data.user) {
     redirect("/");
   }
 

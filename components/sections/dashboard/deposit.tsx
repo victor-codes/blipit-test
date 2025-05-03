@@ -23,7 +23,7 @@ import {
   DASHBOARD_SECTION,
 } from "@/lib/contants";
 import { generateReference } from "@/lib/utils";
-import { depositSchema } from "@/lib/validationSchema/client";
+import { depositSchema } from "@/lib/validation-schema/client";
 import { depositToWallet } from "@/services/wallets";
 import { DepositFormData } from "@/types/wallet";
 import { toast } from "sonner";
@@ -53,8 +53,6 @@ export const Deposit = ({ updateSection }: DepositProps) => {
     onSuccess: () => {
       toast.success(`Cha ching deposit successful!🤑`);
       ["wallets", "recent-transactions", "transactions"].forEach((key) => {
-        console.log(`Invalidating ${key}`);
-
         queryClient.invalidateQueries({ queryKey: [key] });
       });
       goBack();

@@ -1,25 +1,13 @@
 import { createClient } from "@/lib/supabase/server";
-import { ServerLoginSchema } from "@/lib/validationSchema/server";
+import { ServerLoginSchema } from "@/lib/validation-schema/server";
 import { NextRequest, NextResponse } from "next/server";
+import { serverValidationBlock } from "../../lib/helpers";
 
 export const POST = async (req: NextRequest) => {
   const supasbase = await createClient();
   const body = await req.json();
-  const parsedData = ServerLoginSchema.safeParse(body);
 
-  if (!parsedData.success) {
-    return NextResponse.json(
-      {
-        message: "Invalid Email",
-        details: parsedData.error.format(),
-      },
-      {
-        status: 400,
-      }
-    );
-  }
-
-  const { email } = parsedData.data;
+  const { email } = serverValidationBlock(ServerLoginSchema, body);
 
   const { error } = await supasbase.auth.signInWithOtp({
     email,

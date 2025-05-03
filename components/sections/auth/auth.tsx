@@ -4,7 +4,7 @@ import { AUTH_FLOW } from "@/lib/contants";
 import {
   existingUserSchema,
   newUserSchema,
-} from "@/lib/validationSchema/client";
+} from "@/lib/validation-schema/client";
 import { FormDataValues } from "@/types/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";

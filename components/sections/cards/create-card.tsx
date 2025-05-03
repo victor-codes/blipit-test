@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useDashboard } from "@/contexts/dashboard-context";
 import { CARDS_SECTION } from "@/lib/contants";
-import { createCardSchema } from "@/lib/validationSchema/client";
+import { createCardSchema } from "@/lib/validation-schema/client";
 import { createCard } from "@/services/wallets";
 import { CreateDataFormData } from "@/types/wallet";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -54,7 +54,7 @@ export const CreateCard = ({ updateSection }: CreateCardProps) => {
     const payload = {
       identity_id: user?.identity_id!,
       meta_data: {
-        card_name: data.name,
+        nick_name: data.name,
       },
     };
 

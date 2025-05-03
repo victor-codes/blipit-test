@@ -1,5 +1,5 @@
 "use client";
-import { withAuth } from "../hoc/withAuth";
+import { withAuth } from "../hoc/with-auth";
 import { PageWrapper } from "../ui/page";
 import { MobileNav } from "./mobile-nav";
 import { Sidebar } from "./sidebar";

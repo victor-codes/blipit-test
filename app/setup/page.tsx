@@ -1,4 +1,6 @@
 "use client";
+import { hasSetup } from "@/components/hoc/has-setup";
+import { SetupSection } from "@/components/sections/setup";
 import { Button } from "@/components/ui/button";
 import { CountryPicker } from "@/components/ui/country-picker";
 import { DateOfBirth } from "@/components/ui/date-of-birth";
@@ -20,7 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useDashboard } from "@/contexts/dashboard-context";
-import { updateUserSchema } from "@/lib/validationSchema/client";
+import { updateUserSchema } from "@/lib/validation-schema/client";
 import { updateUser } from "@/services/user";
 import { UpdateUserFormDataValues } from "@/types/auth";
 
@@ -28,7 +30,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -37,7 +39,7 @@ const Page = () => {
   const queryClient = useQueryClient();
   const { user } = useDashboard();
 
-  const [country, setCountry] = useState<string>("Nigeria");
+  const [country, setCountry] = useState<string>("");
 
   const {
     register,
@@ -47,16 +49,6 @@ const Page = () => {
     formState: { errors, isValid, isDirty },
   } = useForm<UpdateUserFormDataValues>({
     resolver: zodResolver(updateUserSchema) as any,
-    defaultValues: {
-      first_name: "Victor",
-      last_name: "Adedapo",
-      gender: "male",
-      nationality: "Nigerian",
-      street: "Oyo",
-      post_code: "200001",
-      city: "Oyo",
-      state: "Oyo",
-    },
     mode: "onChange",
   });
 
@@ -73,8 +65,6 @@ const Page = () => {
   });
 
   const onSubmit: SubmitHandler<UpdateUserFormDataValues> = (data) => {
-
-
     updateUserFn({
       last_name: data.last_name,
       first_name: data.first_name,
@@ -91,7 +81,6 @@ const Page = () => {
   };
 
   const [watchedNationality, watchGender] = watch(["nationality", "gender"]);
-
   const handleDateChange = (date: Date | null) => {
     if (date) {
       setValue("date_of_birth", date, { shouldValidate: true });
@@ -121,111 +110,115 @@ const Page = () => {
             </h2>
             <FormDesc>Please provide your personal information</FormDesc>
           </FormHeader>
-          <Form onSubmit={handleSubmit(onSubmit)}>
-            <FormColumn>
-              <Label htmlFor="firstName">First name</Label>
-              <Input
-                autoFocus
-                id="firstName"
-                placeholder="Enter your first name"
-                {...register("first_name", { required: true })}
+          <Form onSubmit={handleSubmit(onSubmit)} className="grid gap-y-8">
+            <SetupSection title="Personal Information">
+              <FormColumn>
+                <Label htmlFor="firstName">First name</Label>
+                <Input
+                  autoFocus
+                  id="firstName"
+                  placeholder="Enter your first name"
+                  {...register("first_name", { required: true })}
+                />
+              </FormColumn>
+
+              <FormColumn>
+                <Label htmlFor="lastName">Last name</Label>
+                <Input
+                  id="lastName"
+                  placeholder="Enter your last name"
+                  {...register("last_name", { required: true })}
+                />
+              </FormColumn>
+
+              <Select onValueChange={handleGenderChange} value={watchGender}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Gender" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="male">Male</SelectItem>
+                  <SelectItem value="female">Female</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <FormColumn>
+                <DateOfBirth
+                  onChange={handleDateChange}
+                  minYear={1900}
+                  maxYear={2023}
+                  label="Date of birth"
+                />
+                {errors.date_of_birth && (
+                  <p className="text-sm text-destructive">
+                    {errors.date_of_birth.message}
+                  </p>
+                )}
+              </FormColumn>
+            </SetupSection>
+
+            <SetupSection title="Address Information">
+              <FormColumn>
+                <Label htmlFor="street">Street Address</Label>
+                <Input
+                  id="street"
+                  placeholder="Enter your street address"
+                  {...register("street", { required: true })}
+                />
+                {errors.street && (
+                  <p className="text-sm text-destructive">
+                    {errors.street.message}
+                  </p>
+                )}
+              </FormColumn>
+
+              <FormColumn>
+                <Label htmlFor="city">City</Label>
+                <Input
+                  id="city"
+                  placeholder="Enter your city"
+                  {...register("city", { required: true })}
+                />
+                {errors.city && (
+                  <p className="text-sm text-destructive">
+                    {errors.city.message}
+                  </p>
+                )}
+              </FormColumn>
+
+              <FormColumn>
+                <Label htmlFor="state">State/Province</Label>
+                <Input
+                  id="state"
+                  placeholder="Enter your state or province"
+                  {...register("state", { required: true })}
+                />
+                {errors.state && (
+                  <p className="text-sm text-destructive">
+                    {errors.state.message}
+                  </p>
+                )}
+              </FormColumn>
+
+              <FormColumn>
+                <Label htmlFor="postCode">Post Code</Label>
+                <Input
+                  id="postCode"
+                  placeholder="Enter your post code"
+                  {...register("post_code", { required: true })}
+                />
+                {errors.post_code && (
+                  <p className="text-sm text-destructive">
+                    {errors.post_code.message}
+                  </p>
+                )}
+              </FormColumn>
+
+              <CountryPicker
+                value={watchedNationality}
+                onChange={handleNationalityChange}
               />
-            </FormColumn>
-
-            <FormColumn>
-              <Label htmlFor="lastName">Last name</Label>
-              <Input
-                id="lastName"
-                placeholder="Enter your last name"
-                {...register("last_name", { required: true })}
-              />
-            </FormColumn>
-
-            <Select onValueChange={handleGenderChange} value={watchGender}>
-              <SelectTrigger>
-                <SelectValue placeholder="Gender" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="male">Male</SelectItem>
-                <SelectItem value="female">Female</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <FormColumn>
-              <DateOfBirth
-                onChange={handleDateChange}
-                minYear={1900}
-                maxYear={2023}
-                label="Date of birth"
-              />
-              {errors.date_of_birth && (
-                <p className="text-sm text-destructive">
-                  {errors.date_of_birth.message}
-                </p>
-              )}
-            </FormColumn>
-
-            <FormColumn>
-              <Label htmlFor="street">Street Address</Label>
-              <Input
-                id="street"
-                placeholder="Enter your street address"
-                {...register("street", { required: true })}
-              />
-              {errors.street && (
-                <p className="text-sm text-destructive">
-                  {errors.street.message}
-                </p>
-              )}
-            </FormColumn>
-
-            <FormColumn>
-              <Label htmlFor="city">City</Label>
-              <Input
-                id="city"
-                placeholder="Enter your city"
-                {...register("city", { required: true })}
-              />
-              {errors.city && (
-                <p className="text-sm text-destructive">
-                  {errors.city.message}
-                </p>
-              )}
-            </FormColumn>
-
-            <FormColumn>
-              <Label htmlFor="state">State/Province</Label>
-              <Input
-                id="state"
-                placeholder="Enter your state or province"
-                {...register("state", { required: true })}
-              />
-              {errors.state && (
-                <p className="text-sm text-destructive">
-                  {errors.state.message}
-                </p>
-              )}
-            </FormColumn>
-
-            <FormColumn>
-              <Label htmlFor="postCode">Post Code</Label>
-              <Input
-                id="postCode"
-                placeholder="Enter your post code"
-                {...register("post_code", { required: true })}
-              />
-              {errors.post_code && (
-                <p className="text-sm text-destructive">
-                  {errors.post_code.message}
-                </p>
-              )}
-            </FormColumn>
-
-            <CountryPicker
-              value={watchedNationality}
-              onChange={handleNationalityChange}
-            />
+            </SetupSection>
 
             <FormAction>
               <Button
@@ -244,4 +237,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default hasSetup(Page);

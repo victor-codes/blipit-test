@@ -1,6 +1,6 @@
 "use client";
 import { useDashboard } from "@/contexts/dashboard-context";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export function withAuth<P extends object>(
@@ -8,11 +8,22 @@ export function withAuth<P extends object>(
 ) {
   return function WithAuthComponent(props: P) {
     const { user, isInitializing } = useDashboard();
+    const pathname = usePathname();
     const router = useRouter();
 
     useEffect(() => {
       if (!isInitializing && user && !user.completed_setup) {
         router.push("/setup");
+      }
+      if (
+        !isInitializing &&
+        user &&
+        pathname === "/setup" &&
+        user?.completed_setup
+      ) {
+        console.log("User completed setup");
+
+        router.replace("/");
       }
     }, [user, isInitializing, router]);
 

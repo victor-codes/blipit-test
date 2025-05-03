@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn, dateFormatter } from "@/lib/utils";
-import { isAtLeastAge } from "@/lib/validationSchema/client";
+import { isAtLeastAge } from "@/lib/validation-schema/client";
 import { useEffect, useState } from "react";
 
 export interface DateOfBirthProps {

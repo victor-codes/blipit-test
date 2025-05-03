@@ -1,5 +1,5 @@
 export const AMOUNT_PRECISION = 100;
-export const APP_CURRENCY = "USD";
+export const APP_CURRENCY = process.env.NEXT_PUBLIC_APP_CURRENCY || "USD";
 
 export enum AUTH_FLOW {
   FORM,

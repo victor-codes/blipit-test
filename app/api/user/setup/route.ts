@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { createCustomerIdentity, createMainWallet } from "@/services/blnk";
 import { NextRequest, NextResponse } from "next/server";
+import { serverValidationBlock } from "../../lib/helpers";
+import { ServerUpdateUserSchema } from "@/lib/validation-schema/server";
 
 export const POST = async (req: NextRequest) => {
   const supabase = await createClient();
@@ -18,7 +20,7 @@ export const POST = async (req: NextRequest) => {
     city,
     state,
     country,
-  } = body;
+  } = serverValidationBlock(ServerUpdateUserSchema, body);
 
   const {
     data: { user },
@@ -65,6 +67,16 @@ export const POST = async (req: NextRequest) => {
       identity_id: identityRes,
       wallet_id: walletRes,
       completed_setup: true,
+      identity: {
+        dob: date_of_birth,
+        gender,
+        street,
+        post_code,
+        city,
+        state,
+        country,
+        nationality,
+      },
     })
     .eq("id", user?.id)
     .select()

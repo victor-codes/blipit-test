@@ -52,12 +52,7 @@ export const maskedPhoneNumber = (phone: string) => {
   return formatted;
 };
 
-export const getExpiryDateAdd3Years = () => {
-  const now = new Date();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const year = String(now.getFullYear() + 3).slice(-2);
-  return `${month}/${year}`;
-};
+
 
 export const NAVIGATION_LIST = [
   { icon: Home, label: "Home", href: "/" },

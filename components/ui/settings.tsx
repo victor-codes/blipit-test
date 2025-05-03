@@ -22,7 +22,7 @@ export const SettingsItem = ({
   return (
     <div
       className={cn(
-        "flex justify-between min-h-[3rem] items-center p-4 gap-x-3  "
+        "flex justify-between min-h-[3rem] items-center p-4 gap-x-3"
       )}
     >
       <div className="flex items-center gap-x-2 ">

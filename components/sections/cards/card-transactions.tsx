@@ -62,10 +62,10 @@ export const CardTransactions = () => {
             description,
             status,
             amount,
-            transaction_id,
+            reference,
             meta_data,
           }) => (
-            <Modal key={transaction_id}>
+            <Modal key={reference}>
               <ModalTrigger>
                 <div>
                   <TransactionItem
@@ -78,7 +78,7 @@ export const CardTransactions = () => {
               </ModalTrigger>
               <TransactionDetails
                 {...{
-                  reference: transaction_id,
+                  reference,
                   description,
                   status,
                   amount,

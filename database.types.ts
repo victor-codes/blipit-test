@@ -9,59 +9,46 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      identities: {
+      cards: {
         Row: {
+          billing_address: string | null
+          card_name: string | null
           created_at: string
+          expiry_date: string
           id: string
-          identity_id: string
-          identity_type: string
-          meta_data: Json | null
-          profile_id: string
+          tokenized_cvv: string
+          tokenized_number: string
+          zip_code: string | null
         }
         Insert: {
+          billing_address?: string | null
+          card_name?: string | null
           created_at?: string
+          expiry_date: string
           id?: string
-          identity_id: string
-          identity_type: string
-          meta_data?: Json | null
-          profile_id: string
+          tokenized_cvv: string
+          tokenized_number: string
+          zip_code?: string | null
         }
         Update: {
+          billing_address?: string | null
+          card_name?: string | null
           created_at?: string
+          expiry_date?: string
           id?: string
-          identity_id?: string
-          identity_type?: string
-          meta_data?: Json | null
-          profile_id?: string
+          tokenized_cvv?: string
+          tokenized_number?: string
+          zip_code?: string | null
         }
-        Relationships: []
-      }
-      "profile--ted": {
-        Row: {
-          created_at: string
-          email: string
-          first_name: string | null
-          id: string
-          last_name: string | null
-          phone: string
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          first_name?: string | null
-          id?: string
-          last_name?: string | null
-          phone?: string
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          first_name?: string | null
-          id?: string
-          last_name?: string | null
-          phone?: string
-        }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "cards_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -102,84 +89,6 @@ export type Database = {
           phone_number?: string | null
           updated_at?: string
           wallet_id?: string | null
-        }
-        Relationships: []
-      }
-      transactions: {
-        Row: {
-          amount: number
-          created_at: string
-          currency: string
-          from_balance_id: string
-          id: string
-          meta_data: Json | null
-          reference: string
-          to_balance_id: string
-          transaction_type: string
-          tx_id: string
-        }
-        Insert: {
-          amount: number
-          created_at?: string
-          currency?: string
-          from_balance_id: string
-          id?: string
-          meta_data?: Json | null
-          reference: string
-          to_balance_id: string
-          transaction_type: string
-          tx_id: string
-        }
-        Update: {
-          amount?: number
-          created_at?: string
-          currency?: string
-          from_balance_id?: string
-          id?: string
-          meta_data?: Json | null
-          reference?: string
-          to_balance_id?: string
-          transaction_type?: string
-          tx_id?: string
-        }
-        Relationships: []
-      }
-      wallets: {
-        Row: {
-          balance_id: string
-          created_at: string
-          currency: string
-          id: string
-          identity_id: string
-          ledger_id: string
-          meta_data: Json | null
-          profile_id: string
-          status: string
-          wallet_type: string
-        }
-        Insert: {
-          balance_id: string
-          created_at?: string
-          currency?: string
-          id?: string
-          identity_id: string
-          ledger_id: string
-          meta_data?: Json | null
-          profile_id: string
-          status: string
-          wallet_type: string
-        }
-        Update: {
-          balance_id?: string
-          created_at?: string
-          currency?: string
-          id?: string
-          identity_id?: string
-          ledger_id?: string
-          meta_data?: Json | null
-          profile_id?: string
-          status?: string
-          wallet_type?: string
         }
         Relationships: []
       }

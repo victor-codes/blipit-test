@@ -2,6 +2,7 @@ import {
   ATCreateCard,
   ATDeposit,
   ATWithdrawal,
+  GetCardDetailsRes,
   MainWalletData,
 } from "@/types/wallet";
 
@@ -61,7 +62,7 @@ export const withdrawToWallet = async (data: ATWithdrawal) => {
 };
 
 export const createCard = async (payload: ATCreateCard) => {
-  const res = await fetch(`/api/user/create-card`, {
+  const res = await fetch(`/api/user/card`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -73,7 +74,24 @@ export const createCard = async (payload: ATCreateCard) => {
     console.error("Failed to create card:", res);
     throw new Error("Failed to create card, response not ok.");
   }
-  const transactionData = await res.json();
+  const data = await res.json();
 
-  return transactionData;
+  return data;
+};
+
+export const getCardDetails = async (): Promise<GetCardDetailsRes> => {
+  const res = await fetch(`/api/user/card`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!res.ok) {
+    console.error("Failed to fetch card details:", res);
+    throw new Error("Failed to fetch card details, response not ok.");
+  }
+  const data = await res.json();
+
+  return data;
 };

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page";
-import { SettingsItem, SettingsSection } from "@/components/ui/settings-item";
+import { SettingsItem, SettingsSection } from "@/components/ui/settings";
 import { useDashboard } from "@/contexts/dashboard-context";
 import { maskedPhoneNumber } from "@/lib/utils";
 import { logOut } from "@/services/auth";
