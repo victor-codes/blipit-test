@@ -1,9 +1,10 @@
-import { depositSchema } from "@/lib/validationSchema/client";
+import { createCardSchema, depositSchema } from "@/lib/validationSchema/client";
 import { CreateLedgerBalanceResp } from "@blnkfinance/blnk-typescript/dist/src/types/ledgerBalances";
 import { CreateTransactionResponse } from "@blnkfinance/blnk-typescript/dist/src/types/transactions";
 import { z } from "zod";
 
 export type DepositFormData = z.infer<typeof depositSchema>;
+export type CreateDataFormData = z.infer<typeof createCardSchema>;
 
 export type MainWalletData = CreateLedgerBalanceResp<Record<string, unknown>>;
 
@@ -22,6 +23,12 @@ export type ATDeposit = {
   }; // Enable for the external source
 };
 
+export type ATCreateCard = {
+  identity_id: string;
+  meta_data: {
+    [key: string]: string;
+  };
+};
 export type ATWithdrawal = Omit<ATDeposit, "allow_overdraft">;
 
 export type TransactionsItem = CreateTransactionResponse<TransactionMetaData>;

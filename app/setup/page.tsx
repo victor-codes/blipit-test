@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useDashboard } from "@/contexts/dashboardContext";
+import { useDashboard } from "@/contexts/dashboard-context";
 import { updateUserSchema } from "@/lib/validationSchema/client";
 import { updateUser } from "@/services/user";
 import { UpdateUserFormDataValues } from "@/types/auth";
@@ -73,19 +73,7 @@ const Page = () => {
   });
 
   const onSubmit: SubmitHandler<UpdateUserFormDataValues> = (data) => {
-    console.log({
-      last_name: data.last_name,
-      first_name: data.first_name,
-      date_of_birth: data.date_of_birth,
-      phone_number: user?.phone_number!,
-      nationality: data.nationality,
-      gender: data.gender,
-      street: data.street,
-      post_code: data.post_code,
-      city: data.city,
-      state: data.state,
-      country,
-    });
+
 
     updateUserFn({
       last_name: data.last_name,

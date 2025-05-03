@@ -17,7 +17,7 @@ export const OTPAuth = ({ watchEmail, back }: OTPAuthProps) => {
 
   const { mutate: createUserFn, isPending } = useMutation({
     mutationFn: confirmOTP,
-    onSuccess: (data) => {
+    onSuccess: () => {
       router.replace("/");
     },
     onError: (error) => {

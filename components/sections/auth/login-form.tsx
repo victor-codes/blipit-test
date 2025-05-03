@@ -1,6 +1,5 @@
 "use client";
 import { AUTH_FLOW } from "@/lib/contants";
-
 import {
   existingUserSchema,
   newUserSchema,
@@ -20,6 +19,7 @@ export default function AuthPage() {
     register,
     handleSubmit,
     watch,
+    setValue,
     reset,
     formState: { errors, isDirty, isValid },
   } = useForm<FormDataValues>({
@@ -45,14 +45,16 @@ export default function AuthPage() {
         <FormAuth
           {...{
             errors,
-            isDisabled: !isDirty || !isValid,
+            register,
+            isDisabled: isDirty || isValid,
             isExistingUser,
             setIsExistingUser,
             setFlow,
+            watchEmail,
             reset,
             watchPhoneCode,
-            register,
             handleSubmit,
+            setValue,
           }}
         />
       ) : (

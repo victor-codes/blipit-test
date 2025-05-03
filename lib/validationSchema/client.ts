@@ -78,3 +78,7 @@ export const withdrawSchema = (maxAmount: number) =>
         message: `Amount must not exceed ${maxAmount}`,
       }),
   });
+
+export const createCardSchema = z.object({
+  name: z.string().min(2, "At least 3 characters"),
+});

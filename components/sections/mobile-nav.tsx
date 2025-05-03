@@ -7,7 +7,7 @@ export const MobileNav = () => {
   const pathname = usePathname();
   return (
     <div>
-      <nav className=" relative block md:hidden h-16 w-full  max-w-md bg-white border-t border-gray-200 z-10">
+      <nav className=" relative block md:hidden h-16 w-full  md:max-w-md bg-white border-t border-gray-200 z-10">
         <div className="flex justify-around items-center h-16">
           {NAVIGATION_LIST.map((item) => {
             const isActive = pathname === item.href;
@@ -19,7 +19,7 @@ export const MobileNav = () => {
                   "flex flex-col items-center justify-center w-full h-full",
                   isActive
                     ? "text-primary"
-                    : "text-gray-500 hover:text-gray-900"
+                    : "text-gray-500 hover:text-secondary-foreground"
                 )}
               >
                 <item.icon className="h-5 w-5" />

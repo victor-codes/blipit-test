@@ -1,14 +1,33 @@
-import { Cards } from "@/components/sections/cards/cards";
+"use client";
+import { CardsOverView } from "@/components/sections/cards/cards-overview";
+import { CreateCard } from "@/components/sections/cards/create-card";
+import { FundCard } from "@/components/sections/cards/fund-card";
+import { WithdrawCard } from "@/components/sections/cards/widthdraw-card";
+import { CARDS_SECTION } from "@/lib/contants";
+import { useState } from "react";
 
 const Page = () => {
-  return (
-    <div className="space-y-6 flex flex-col h-full">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Card</h1>
-      </div>
-      <Cards />
-    </div>
-  );
+  const [section, setSection] = useState<CARDS_SECTION>(CARDS_SECTION.OVERVIEW);
+
+  const updateSection = (section: CARDS_SECTION) => {
+    setSection(section);
+  };
+
+  const renderChildren = () => {
+    switch (section) {
+      case CARDS_SECTION.CREATE_CARD:
+        return <CreateCard {...{ updateSection }} />;
+      case CARDS_SECTION.WITHDRAW:
+        return <WithdrawCard {...{ updateSection }} />;
+      case CARDS_SECTION.FUND_CARD:
+        return <FundCard {...{ updateSection }} />;
+      case CARDS_SECTION.OVERVIEW:
+      default:
+        return <CardsOverView {...{ updateSection }} />;
+    }
+  };
+
+  return <>{renderChildren()}</>;
 };
 
 export default Page;

@@ -4,24 +4,24 @@ import { fetchAllTransactions } from "@/services/transactions";
 import { TransactionMetaData } from "@/types/wallet";
 import { useInView } from "react-intersection-observer";
 
+import { Modal, ModalTrigger } from "@/components/ui/modal";
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Modal, ModalTrigger } from "../ui/modal";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { TransactionItem } from "../ui/transaction-item";
 
-import { TransactionDetails } from "../ui/transaction-details";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TransactionItem } from "@/components/ui/transaction-item";
+import { TransactionDetails } from "@/components/ui/transaction-details";
 
-export const Transactions = () => {
+export const CardTransactions = () => {
   const { user } = useDashboard();
   const { ref, inView } = useInView();
 
   const [activeTab, setActiveTab] = useState("all");
 
   const { data, fetchNextPage, hasNextPage } = useSuspenseInfiniteQuery({
-    queryKey: ["transactions"],
+    queryKey: ["card-transactions"],
     queryFn: async ({ pageParam }) =>
-      await fetchAllTransactions(user?.wallet_id!, pageParam),
+      await fetchAllTransactions(user?.card_id!, pageParam),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       return lastPage.next_page;
@@ -37,7 +37,7 @@ export const Transactions = () => {
       transaction?.meta_data as unknown as string
     );
 
-    return serelizeMetadata.transaction_type === activeTab;
+    return serelizeMetadata.purpose === activeTab;
   });
 
   useEffect(() => {
@@ -49,11 +49,10 @@ export const Transactions = () => {
 
   return (
     <Tabs defaultValue="all" onValueChange={setActiveTab} className="pb-10">
-      <TabsList className="grid grid-cols-4 mb-4">
+      <TabsList className="grid grid-cols-3 mb-4">
         <TabsTrigger value="all">All</TabsTrigger>
-        <TabsTrigger value="deposit">Deposits</TabsTrigger>
-        <TabsTrigger value="withdrawal">Withdrawals</TabsTrigger>
-        <TabsTrigger value="internal_transfer">Transfers</TabsTrigger>
+        <TabsTrigger value="fund_card">Deposits</TabsTrigger>
+        <TabsTrigger value="fund_wallet">Withdrawals</TabsTrigger>
       </TabsList>
 
       <TabsContent value={activeTab} className="space-y-4">
@@ -72,6 +71,7 @@ export const Transactions = () => {
                   <TransactionItem
                     metadata={meta_data}
                     amount={amount}
+                    purpose="fund_card"
                     date={created_at!}
                   />
                 </div>

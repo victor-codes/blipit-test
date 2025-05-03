@@ -1,6 +1,7 @@
 // import { BlnkInit } from "@blnkfinance/blnk-typescript";
 import { Blnk } from "@blnkfinance/blnk-typescript/dist/src/blnk/endpoints/baseBlnkClient";
 import { BlnkInit } from "@blnkfinance/blnk-typescript";
+import { getExpiryDateAdd3Years } from "@/lib/utils";
 
 let blnkInstance: Blnk | null = null;
 
@@ -51,8 +52,6 @@ export async function createCustomerIdentity(customerData: CustomerData) {
   const blnk = await getBlnkInstance();
   const { Identity } = blnk;
 
-  console.log("Creating customer identity:", customerData);
-
   const identity = await Identity.create({
     identity_type: "individual",
     first_name: customerData.firstName,
@@ -79,9 +78,6 @@ export async function createCustomerIdentity(customerData: CustomerData) {
     throw new Error("Failed to create identity, response data is null.");
   }
 
-  console.log("Identity Data", identity.data);
-
-  console.log("Main Wallet created:", identity.data.identity_id);
   return identity.data.identity_id;
 }
 
@@ -109,88 +105,14 @@ export async function createMainWallet(
     throw new Error("Failed to create main wallet, response data is null.");
   }
 
-  console.log("Main wallet", mainWallet.data);
-
-  console.log("Main Wallet created:", mainWallet.data.balance_id);
   return mainWallet.data.balance_id;
 }
 
-// export async function depositToWallet(
-//   customerBalanceID: string,
-//   amount: number,
-//   uniqueReference: string,
-//   description: string
-// ) {
-//   const blnk = await getBlnkInstance();
-//   const { Transactions } = blnk;
-
-//   const deposit = await Transactions.create({
-//     amount: amount,
-//     precision: 100,
-//     reference: uniqueReference,
-//     description: description || "Deposit to wallet",
-//     currency: "USD",
-//     source: "@WorldUSD",
-//     destination: customerBalanceID,
-//     allow_overdraft: true, // Enable for the external source
-//     meta_data: {
-//       transaction_type: "deposit",
-//       channel: "bank_transfer",
-//     },
-//   });
-
-//   if (!deposit.data) {
-//     console.error("Failed to create deposit transaction:", deposit);
-//     throw new Error(
-//       "Failed to create deposit transaction, response data is null."
-//     );
-//   }
-
-//   console.log("Deposit transaction created:", deposit.data.transaction_id);
-//   return deposit.data.transaction_id;
-// }
-
-// export async function withdrawFromWallet(
-//   customerBalanceID: string,
-//   amount: number,
-//   uniqueReference: string,
-//   description: string
-// ) {
-//   const blnk = await getBlnkInstance();
-//   const { Transactions } = blnk;
-
-//   const withdrawal = await Transactions.create({
-//     amount: amount,
-//     precision: 100,
-//     reference: uniqueReference,
-//     description: description || "Withdrawal from wallet",
-//     currency: "USD",
-//     source: customerBalanceID,
-//     destination: "@WorldUSD",
-//     meta_data: {
-//       transaction_type: "withdrawal",
-//       channel: "bank_transfer",
-//     },
-//   });
-
-//   if (!withdrawal.data) {
-//     console.error("Failed to create withdrawal transaction:", withdrawal);
-//     throw new Error(
-//       "Failed to create withdrawal transaction, response data is null."
-//     );
-//   }
-
-//   console.log(
-//     "Withdrawal transaction created:",
-//     withdrawal.data.transaction_id
-//   );
-//   return withdrawal.data.transaction_id;
-// }
-
-async function createCardWallet(
+export async function createCardWallet(
   ledgerId: string,
   identityId: string,
-  currency: string
+  currency: string,
+  meta_data: { [key: string]: string }
 ) {
   const blnk = await getBlnkInstance();
   const { LedgerBalances } = blnk;
@@ -203,9 +125,10 @@ async function createCardWallet(
       wallet_type: "card",
       purpose: "card_payments",
       status: "active",
+      ...meta_data,
       card_details: {
         masked_number: "xxxx-xxxx-xxxx-1234",
-        expiry: "12/25",
+        expiry: getExpiryDateAdd3Years(),
         type: "virtual",
       },
     },
@@ -216,6 +139,5 @@ async function createCardWallet(
     throw new Error("Failed to create card wallet, response data is null.");
   }
 
-  console.log("Card Wallet created:", cardWallet.data.balance_id);
   return cardWallet.data.balance_id;
 }

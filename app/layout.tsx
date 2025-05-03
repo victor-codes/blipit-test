@@ -1,5 +1,5 @@
-import { DashboardContextProvider } from "@/contexts/dashboardContext";
-import { QueryProvider } from "@/contexts/queryClient";
+import { DashboardContextProvider } from "@/contexts/dashboard-context";
+import { QueryProvider } from "@/contexts/query-client";
 import { siteConfig } from "@/lib/meta";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";

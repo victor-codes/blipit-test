@@ -1,12 +1,11 @@
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
-import { JSX } from "react";
 
 export const SettingsSection = ({ title, children }: SettingsSectionProps) => {
   return (
     <div>
       <h2 className="text-primary font-medium mb-3">{title}</h2>
-      <div className="border rounded-t-xl rounded-b-xl [&>*:not(:first-child)]:border-t shadow-sm">
+      <div className="border rounded-t-xl rounded-b-xl [&>*:not(:first-child)]:border-t">
         {children}
       </div>
     </div>
@@ -48,15 +47,15 @@ export const SettingsItem = ({
   );
 };
 
-export type SettingsSectionProps = {
+type SettingsSectionProps = {
   title: string;
   children: React.ReactNode;
 };
 
-export type SettingsItemProps = {
+type SettingsItemProps = {
   title: string;
   desc?: string;
   value?: string;
   showArrow?: boolean;
-  icon?: JSX.Element;
+  icon?: React.JSX.Element;
 };

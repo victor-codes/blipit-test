@@ -1,7 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-
 import { Button } from "@/components/ui/button";
 
 import {
@@ -16,23 +14,30 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NumberInput } from "@/components/ui/number-input";
-import { useDashboard } from "@/contexts/dashboardContext";
+import { useDashboard } from "@/contexts/dashboard-context";
 import { useWallets } from "@/contexts/wallets-context";
-import { AMOUNT_PRECISION, APP_CURRENCY } from "@/lib/contants";
+import {
+  AMOUNT_PRECISION,
+  APP_CURRENCY,
+  DASHBOARD_SECTION,
+} from "@/lib/contants";
 import { balanceFormatter, generateReference } from "@/lib/utils";
 import { withdrawSchema } from "@/lib/validationSchema/client";
 import { withdrawToWallet } from "@/services/wallets";
 import { DepositFormData } from "@/types/wallet";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-export default function WithdrawFunds() {
-  const router = useRouter();
-  const { user } = useDashboard();
+type WithdrawProps = {
+  updateSection: (section: DASHBOARD_SECTION) => void;
+};
 
-  const { wallet, refetchWallets } = useWallets();
+export const Withdraw = ({ updateSection }: WithdrawProps) => {
+  const { user } = useDashboard();
+  const { wallet } = useWallets();
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -43,19 +48,21 @@ export default function WithdrawFunds() {
     resolver: zodResolver(withdrawSchema(wallet?.balance! / AMOUNT_PRECISION)),
   });
 
+  const goBack = () => updateSection(DASHBOARD_SECTION.OVERVIEW);
+
   const { mutate: withdraw, isPending } = useMutation({
     mutationFn: withdrawToWallet,
     onSuccess: () => {
       toast.success(`Withdrawal successful!`);
-      refetchWallets();
-      router.push("/");
+      ["recent-transactions", "transactions", "wallets"].forEach((key) =>
+        queryClient.invalidateQueries({ queryKey: [key] })
+      );
+      goBack();
     },
     onError: (error) => {
       toast.error(`Deposit failed ${error.message}`);
     },
   });
-
-  // Generate a reference number
 
   const onSubmit = (data: DepositFormData) => {
     const reference = generateReference("wdr");
@@ -156,7 +163,7 @@ export default function WithdrawFunds() {
                 type="button"
                 variant="outline"
                 className="w-full"
-                onClick={() => router.back()}
+                onClick={goBack}
               >
                 Cancel
               </Button>
@@ -166,4 +173,4 @@ export default function WithdrawFunds() {
       </div>
     </>
   );
-}
+};

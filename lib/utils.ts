@@ -2,20 +2,10 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { APP_CURRENCY } from "./contants";
 import { Home, CreditCard, Activity, Settings } from "lucide-react";
+import { StatusType } from "@blnkfinance/blnk-typescript/dist/src/types/transactions";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
-}
-
-// auth
-export enum AUTH_FLOW {
-  FORM,
-  OTP,
-}
-
-export enum AUTH_STEP {
-  EMAIL,
-  DETAILS,
 }
 
 export const dateFormatter = new Intl.DateTimeFormat("en-US", {
@@ -46,7 +36,7 @@ export const formatDate = (timestamp: number): string => {
   return date.toLocaleDateString("en-US", options);
 };
 
-export const generateReference = (type: "dep" | "wdr") =>
+export const generateReference = (type: "dep" | "wdr" | "trf") =>
   `${type}-${crypto.randomUUID()}`;
 
 export const maskedPhoneNumber = (phone: string) => {
@@ -62,9 +52,36 @@ export const maskedPhoneNumber = (phone: string) => {
   return formatted;
 };
 
+export const getExpiryDateAdd3Years = () => {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const year = String(now.getFullYear() + 3).slice(-2);
+  return `${month}/${year}`;
+};
+
 export const NAVIGATION_LIST = [
   { icon: Home, label: "Home", href: "/" },
   { icon: CreditCard, label: "Cards", href: "/cards" },
-  { icon: Activity, label: "Activity", href: "/activity" },
+  { icon: Activity, label: "Transactions", href: "/transactions" },
   { icon: Settings, label: "Settings", href: "/settings" },
 ];
+
+export const StatusColorMap: Record<StatusType, string> = {
+  QUEUED: "bg-yellow-100 text-yellow-600",
+  APPLIED: "bg-green-100 text-green-600",
+  REJECTED: "bg-red-100 text-red-600",
+  COMMIT: "bg-blue-100 text-blue-600",
+  VOID: "bg-gray-100 text-gray-600",
+  INFLIGHT: "bg-orange-100 text-orange-600",
+  EXPIRED: "bg-purple-100 text-purple-600",
+};
+
+export const StatusTextMap: Record<StatusType, string> = {
+  QUEUED: "Pending",
+  APPLIED: "Completed",
+  REJECTED: "Failed",
+  COMMIT: "Commit",
+  VOID: "Void",
+  INFLIGHT: "In Flight",
+  EXPIRED: "Expired",
+};

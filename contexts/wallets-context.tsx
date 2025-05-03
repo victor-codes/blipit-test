@@ -2,21 +2,29 @@
 import { getMainBalance } from "@/services/wallets";
 import { useQuery } from "@tanstack/react-query";
 import { createContext, useContext } from "react";
-import { useDashboard } from "./dashboardContext";
+import { useDashboard } from "./dashboard-context";
 import { MainWalletData } from "@/types/wallet";
 
 interface WalletContextState {
   wallet: MainWalletData;
-  fetchingWallets: boolean;
-  errorOnWallets: boolean;
-  refetchWallets: () => void;
+  isFetchingWallet: boolean;
+  errorOnWallet: boolean | null;
+  card: {
+    wallet: MainWalletData;
+    isFetching: boolean;
+    isError: boolean | null;
+  };
 }
 
 const intitalState: WalletContextState = {
   wallet: {} as MainWalletData,
-  fetchingWallets: true,
-  errorOnWallets: false,
-  refetchWallets: () => {},
+  isFetchingWallet: true,
+  errorOnWallet: null,
+  card: {
+    wallet: {} as MainWalletData,
+    isError: null,
+    isFetching: true,
+  },
 };
 const WalletsContext = createContext(intitalState);
 
@@ -27,20 +35,33 @@ export const WalletsProvider = (
 
   const {
     data: balance,
-    isLoading: fetchingWallets,
-    refetch: refetchWallets,
-    isError: errorOnWallets,
+    isLoading: isFetchingWallet,
+    isError: errorOnWallet,
   } = useQuery({
-    queryKey: ["balance"],
+    queryKey: ["wallets"],
     queryFn: () => getMainBalance(user?.wallet_id!),
     enabled: !!user?.wallet_id,
   });
 
-  const value = {
+  const {
+    data: cardBalance,
+    isLoading: fetchingCard,
+    isError: errorOnCard,
+  } = useQuery({
+    queryKey: ["card-wallet"],
+    queryFn: () => getMainBalance(user?.card_id!),
+    enabled: !!user?.card_id,
+  });
+
+  const value: WalletContextState = {
     wallet: balance!,
-    fetchingWallets,
-    refetchWallets,
-    errorOnWallets,
+    isFetchingWallet,
+    errorOnWallet,
+    card: {
+      wallet: cardBalance!,
+      isFetching: fetchingCard,
+      isError: errorOnCard,
+    },
   };
 
   return <WalletsContext value={value}>{props.children}</WalletsContext>;

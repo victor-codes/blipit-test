@@ -1,5 +1,5 @@
 "use client";
-import { useDashboard } from "@/contexts/dashboardContext";
+import { useDashboard } from "@/contexts/dashboard-context";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 

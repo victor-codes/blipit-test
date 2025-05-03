@@ -1,5 +1,9 @@
-import { CreateLedgerBalanceResp } from "@blnkfinance/blnk-typescript/dist/src/types/ledgerBalances";
-import { ATDeposit, ATWithdrawal, MainWalletData } from "@/types/wallet";
+import {
+  ATCreateCard,
+  ATDeposit,
+  ATWithdrawal,
+  MainWalletData,
+} from "@/types/wallet";
 
 export const getMainBalance = async (
   balance_id: string
@@ -52,6 +56,24 @@ export const withdrawToWallet = async (data: ATWithdrawal) => {
     throw new Error("Failed to fetch main transaction, response not ok.");
   }
   const transactionData = await transaction.json();
+
+  return transactionData;
+};
+
+export const createCard = async (payload: ATCreateCard) => {
+  const res = await fetch(`/api/user/create-card`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    console.error("Failed to create card:", res);
+    throw new Error("Failed to create card, response not ok.");
+  }
+  const transactionData = await res.json();
 
   return transactionData;
 };

@@ -9,12 +9,14 @@ interface DashboardContextState {
   isInitializing: boolean;
   user: IUser | null;
   updateState: (data: Partial<DashboardContextState>) => void;
+  error: Error | null;
 }
 
 const intitalState: DashboardContextState = {
   isInitializing: true,
   user: null,
   updateState: () => {},
+  error: null,
 };
 
 export const DashboardContext =
@@ -46,16 +48,8 @@ export const DashboardContextProvider = (
       updateState({
         isInitializing: isLoading,
         user: profileData,
+        error,
       });
-    }
-
-    if (error) {
-      console.log(error);
-
-      // updateState({
-      //   isInitializing: false,
-      //   user: null,
-      // });
     }
   }, [profileData, isLoading]);
 

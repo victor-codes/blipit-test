@@ -56,8 +56,6 @@ export const POST = async (req: NextRequest) => {
     process.env.BLNK_CURRENCY!
   );
 
-  console.log({ identity_id: identityRes, wallet_id: walletRes });
-
   const { data: profile, error } = await supabase
     .from("profiles")
     .update({

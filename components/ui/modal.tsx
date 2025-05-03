@@ -4,7 +4,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -13,7 +12,6 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
@@ -30,36 +28,13 @@ interface ModalContentProps extends BaseProps {
   className?: string;
 }
 
-type MdlWSingleInptCntProps = {
-  title: string;
-  children: React.ReactNode;
-};
-
 const useIsDesktop = () => useMediaQuery("(min-width: 768px)");
-
-export const MdlWSingleInptCnt = ({
-  title,
-  children,
-}: MdlWSingleInptCntProps) => {
-  return (
-    <ModalContent title={title}>
-      <div className="flex flex-col justify-between !h-[35dvh] md:!h-[240px]">
-        {children}
-      </div>
-    </ModalContent>
-  );
-};
 
 export const Modal: React.FC<BaseProps> = ({ children }) => {
   const isDesktop = useIsDesktop();
   const DynamicSheet = isDesktop ? Dialog : Drawer;
 
   return <DynamicSheet>{children}</DynamicSheet>;
-};
-
-/// is this performant?
-type ModalTriggerProps = {
-  children: React.ReactNode;
 };
 
 export const ModalHeader: React.FC<BaseProps> = ({ children }) => {
@@ -110,9 +85,9 @@ export const ModalContent: React.FC<ModalContentProps> = ({
   );
 };
 
-export const ModalFooter: React.FC<BaseProps> = ({ children }) => {
-  const isDesktop = useIsDesktop();
-  const DynamicFooter = isDesktop ? DialogFooter : DrawerFooter;
+// export const ModalFooter: React.FC<BaseProps> = ({ children }) => {
+//   const isDesktop = useIsDesktop();
+//   const DynamicFooter = isDesktop ? DialogFooter : DrawerFooter;
 
-  return <DynamicFooter>{children}</DynamicFooter>;
-};
+//   return <DynamicFooter>{children}</DynamicFooter>;
+// };

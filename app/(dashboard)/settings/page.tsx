@@ -1,8 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page";
 import { SettingsItem, SettingsSection } from "@/components/ui/settings-item";
-import { useDashboard } from "@/contexts/dashboardContext";
+import { useDashboard } from "@/contexts/dashboard-context";
 import { maskedPhoneNumber } from "@/lib/utils";
 import { logOut } from "@/services/auth";
 import { HelpCircle, LogOut, MessageCircle, Star } from "lucide-react";
@@ -23,34 +24,32 @@ export default function Settings() {
 
   return (
     <>
-      <div className="space-y-6">
-        <h1 className="text-2xl font-bold">Settings</h1>
+      <PageHeader>Settings</PageHeader>
 
-        <SettingsSection title="Account">
-          <SettingsItem
-            title="Name"
-            value={`${user?.first_name} ${user?.last_name}`}
-          />
+      <SettingsSection title="Account">
+        <SettingsItem
+          title="Name"
+          value={`${user?.first_name} ${user?.last_name}`}
+        />
 
-          <SettingsItem title="Email" value={user?.email} />
-          <SettingsItem
-            title="Phone Number"
-            value={maskedPhoneNumber(user?.phone_number!)}
-          />
-        </SettingsSection>
+        <SettingsItem title="Email" value={user?.email} />
+        <SettingsItem
+          title="Phone Number"
+          value={maskedPhoneNumber(user?.phone_number!)}
+        />
+      </SettingsSection>
 
-        <SettingsSection title="Support">
-          <SettingsItem title="Help center" icon={<HelpCircle />} />
-          <SettingsItem title="Contact support" icon={<MessageCircle />} />
-          <SettingsItem title="Give feedback" icon={<Star />} />
-        </SettingsSection>
+      <SettingsSection title="Support">
+        <SettingsItem title="Help center" icon={<HelpCircle />} />
+        <SettingsItem title="Contact support" icon={<MessageCircle />} />
+        <SettingsItem title="Give feedback" icon={<Star />} />
+      </SettingsSection>
 
-        <div className="pt-6">
-          <Button onClick={handleLogOut} variant="outline" className="w-full">
-            <LogOut className="mr-2 h-5 w-5" />
-            Sign Out
-          </Button>
-        </div>
+      <div className="pt-6">
+        <Button onClick={handleLogOut} variant="outline" className="w-full">
+          <LogOut className="mr-2 h-5 w-5" />
+          Sign Out
+        </Button>
       </div>
     </>
   );

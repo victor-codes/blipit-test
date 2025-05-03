@@ -1,5 +1,5 @@
 import { Database } from "@/database.types";
-import { AUTH_FLOW } from "@/lib/utils";
+import { AUTH_FLOW } from "@/lib/contants";
 import {
   FieldErrors,
   UseFormHandleSubmit,
@@ -10,7 +10,6 @@ import {
 export type FormDataValues = {
   email: string;
   phone: string;
-  // name: string;
   country_code: string;
 };
 
@@ -31,6 +30,7 @@ export type UpdateUserFormDataValues = {
 export type FormAuthProps = {
   errors: FieldErrors<FormDataValues>;
   isExistingUser: boolean | null;
+  isDisabled: boolean;
   register: UseFormRegister<FormDataValues>;
   setIsExistingUser: React.Dispatch<React.SetStateAction<boolean | null>>;
   setFlow: React.Dispatch<React.SetStateAction<AUTH_FLOW>>;

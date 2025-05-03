@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -17,19 +16,24 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NumberInput } from "@/components/ui/number-input";
-import { useDashboard } from "@/contexts/dashboardContext";
-import { AMOUNT_PRECISION } from "@/lib/contants";
+import { useDashboard } from "@/contexts/dashboard-context";
+import {
+  AMOUNT_PRECISION,
+  APP_CURRENCY,
+  DASHBOARD_SECTION,
+} from "@/lib/contants";
 import { generateReference } from "@/lib/utils";
 import { depositSchema } from "@/lib/validationSchema/client";
 import { depositToWallet } from "@/services/wallets";
 import { DepositFormData } from "@/types/wallet";
 import { toast } from "sonner";
-import { useWallets } from "@/contexts/wallets-context";
 
-export default function DepositFunds() {
-  const router = useRouter();
+type DepositProps = {
+  updateSection: (section: DASHBOARD_SECTION) => void;
+};
+
+export const Deposit = ({ updateSection }: DepositProps) => {
   const { user } = useDashboard();
-  const { refetchWallets } = useWallets();
   const queryClient = useQueryClient();
 
   const {
@@ -42,18 +46,21 @@ export default function DepositFunds() {
     mode: "onChange",
   });
 
+  const goBack = () => updateSection(DASHBOARD_SECTION.OVERVIEW);
+
   const { mutate: depositFunds, isPending } = useMutation({
     mutationFn: depositToWallet,
     onSuccess: () => {
       toast.success(`Cha ching deposit successful!🤑`);
-      refetchWallets();
-      queryClient.invalidateQueries({
-        queryKey: ["recent-transactions", "transactions"],
+      ["wallets", "recent-transactions", "transactions"].forEach((key) => {
+        console.log(`Invalidating ${key}`);
+
+        queryClient.invalidateQueries({ queryKey: [key] });
       });
-      router.push("/");
+      goBack();
     },
-    onError: (error) => {
-      toast.error(`Deposit failed ${error.message}`);
+    onError: () => {
+      toast.error(`Deposit failed`);
     },
   });
 
@@ -67,7 +74,7 @@ export default function DepositFunds() {
       reference: reference,
       description: data.description || "Deposit to wallet",
       source: "@WorldUSD",
-      currency: "USD",
+      currency: APP_CURRENCY,
       allow_overdraft: true,
       meta_data: {
         // title: "Deposit to Main Wallet",
@@ -142,7 +149,7 @@ export default function DepositFunds() {
                 type="button"
                 variant="outline"
                 className="w-full"
-                onClick={() => router.back()}
+                onClick={goBack}
               >
                 Cancel
               </Button>
@@ -152,4 +159,4 @@ export default function DepositFunds() {
       </div>
     </>
   );
-}
+};

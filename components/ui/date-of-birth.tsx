@@ -114,8 +114,6 @@ export function DateOfBirth({
       return;
     }
 
-    const formatted = dateFormatter.format(selectedDate).replace(/\//g, "-");
-
     onChange(selectedDate);
   }, [day, month, year]);
 

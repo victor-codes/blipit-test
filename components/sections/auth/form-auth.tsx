@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/form-blocks";
 import { Input } from "@/components/ui/input";
 import { siteConfig } from "@/lib/meta";
-import { AUTH_FLOW, AUTH_STEP } from "@/lib/utils";
+import { AUTH_FLOW, AUTH_STEP } from "@/lib/contants";
 import { createUser, signInUser } from "@/services/auth";
 import { FormAuthProps, FormDataValues } from "@/types/auth";
 import { useMutation } from "@tanstack/react-query";
@@ -19,10 +19,11 @@ import { toast } from "sonner";
 import { LayoutGroup, motion } from "motion/react";
 
 export const FormAuth = ({
-  errors,
+  // errors,
   isExistingUser,
   setIsExistingUser,
   setFlow,
+  isDisabled,
   reset,
   watchPhoneCode,
   register,
@@ -32,8 +33,7 @@ export const FormAuth = ({
 
   const { mutate: createUserFn, isPending } = useMutation({
     mutationFn: createUser,
-    onSuccess: (data) => {
-      // toast.success(data.message);
+    onSuccess: () => {
       if (step === AUTH_STEP.EMAIL) {
         setFlow(AUTH_FLOW.OTP);
         return;
@@ -48,7 +48,7 @@ export const FormAuth = ({
   const { mutate: signInFn, isPending: isSignInPending } = useMutation({
     mutationFn: signInUser,
 
-    onSuccess: (data) => {
+    onSuccess: () => {
       if (step === AUTH_STEP.EMAIL) {
         setFlow(AUTH_FLOW.OTP);
         return;
@@ -146,7 +146,7 @@ export const FormAuth = ({
                 <MotionFormButton
                   layout
                   transition={SPRING}
-                  disabled={isPending || isSignInPending}
+                  disabled={isPending || isSignInPending || isDisabled}
                   isLoading={isPending || isSignInPending}
                   type="submit"
                   className="w-full"
@@ -172,7 +172,6 @@ export const FormAuth = ({
   );
 };
 
-const MotionFormAction = motion.create(FormAction);
 const MotionFormButton = motion.create(Button);
 const MotionForm = motion.create(Form);
 
