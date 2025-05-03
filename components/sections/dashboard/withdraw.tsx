@@ -54,8 +54,8 @@ export const Withdraw = ({ updateSection }: WithdrawProps) => {
     mutationFn: withdrawToWallet,
     onSuccess: () => {
       toast.success(`Withdrawal successful!`);
-      ["recent-transactions", "transactions", "wallets"].forEach((key) =>
-        queryClient.invalidateQueries({ queryKey: [key] })
+      ["recent-transactions", "wallets"].forEach((key) =>
+        queryClient.refetchQueries({ queryKey: [key] })
       );
       goBack();
     },

@@ -10,7 +10,7 @@ export const CardPreview = ({ data }: { data: CardDetailsType }) => {
 
   if (card.isFetching) {
     return (
-      <Skeleton className="aspect-[1.875] bg-black/20 rounded-xl flex justify-between flex-col p-4" />
+      <Skeleton className="aspect-[1.875] rounded-xl " />
     );
   }
 

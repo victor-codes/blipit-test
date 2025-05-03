@@ -52,8 +52,8 @@ export const Deposit = ({ updateSection }: DepositProps) => {
     mutationFn: depositToWallet,
     onSuccess: () => {
       toast.success(`Cha ching deposit successful!🤑`);
-      ["wallets", "recent-transactions", "transactions"].forEach((key) => {
-        queryClient.invalidateQueries({ queryKey: [key] });
+      ["wallets", "recent-transactions"].forEach((key) => {
+        queryClient.refetchQueries({ queryKey: [key] });
       });
       goBack();
     },

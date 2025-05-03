@@ -36,8 +36,7 @@ import { toast } from "sonner";
 
 const Page = () => {
   const router = useRouter();
-  const queryClient = useQueryClient();
-  const { user } = useDashboard();
+  const { user, updateState } = useDashboard();
 
   const [country, setCountry] = useState<string>("");
 
@@ -56,7 +55,10 @@ const Page = () => {
     mutationFn: updateUser,
     onSuccess: (data) => {
       toast.success(data.message);
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      updateState({
+        user: data.profile,
+      });
+
       router.replace("/");
     },
     onError: (error) => {

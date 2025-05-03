@@ -15,9 +15,9 @@ export function Sidebar() {
   };
 
   return (
-    <div className="hidden h-full md:fixed  w-full max-w-[20rem] md:flex md:flex-col border-r">
-      <div className="flex h-full flex-col bg-card pt-4 pb-6 2xl:pb-10">
-        <div className="flex h-16 items-center px-6 mb-10">
+    <div className="hidden h-full w-full max-w-[20rem] md:flex md:flex-col border-r z-50">
+      <div className="flex h-full flex-col bg-card pt-16 pb-6 2xl:pb-10">
+        <div className="flex items-center px-6 mb-10">
           <h1 className="text-2xl font-medium">{siteConfig.title}</h1>
         </div>
 

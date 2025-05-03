@@ -2,6 +2,7 @@
 import { useDashboard } from "@/contexts/dashboard-context";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { PageSkeletion } from "../ui/page";
 
 export function withAuth<P extends object>(
   WrappedComponent: React.ComponentType<P>
@@ -28,11 +29,7 @@ export function withAuth<P extends object>(
     }, [user, isInitializing, router]);
 
     if (isInitializing) {
-      return (
-        <div className="flex items-center justify-center w-full h-dvh">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-        </div>
-      );
+      return <PageSkeletion />;
     }
 
     if (!user?.first_name || !user?.last_name) {

@@ -1,3 +1,4 @@
+@import "./custom.css";
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -110,6 +111,13 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer components {
+  .no-scrollbar * {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
 }
 
 @layer base {

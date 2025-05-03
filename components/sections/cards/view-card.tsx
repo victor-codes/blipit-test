@@ -17,6 +17,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { CardDetails } from "./card-details";
 import { CardPreview } from "./card-preview";
+import { CardPageSkeletion } from "./card-skeletion";
 
 type ViewCardProps = {
   updateSection: (section: CARDS_SECTION) => void;
@@ -39,9 +40,7 @@ export const ViewCard = ({ updateSection }: ViewCardProps) => {
   });
 
   if (isFetching) {
-    return (
-      <Skeleton className="h-10 w-full bg-black/20 rounded-xl flex justify-between flex-col p-4" />
-    );
+    return <CardPageSkeletion />;
   }
 
   const { details } = data!;

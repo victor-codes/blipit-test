@@ -46,9 +46,12 @@ export const FundCard = ({ updateSection }: FundCardProps) => {
     mutationFn: withdrawToWallet,
     onSuccess: () => {
       toast.success(`Card deposit successful!🤑`);
-      ["card-wallet", "wallets", "recent-transactions", "transactions"].forEach(
-        (key) => queryClient.invalidateQueries({ queryKey: [key] })
-      );
+      [
+        "card-wallet",
+        "wallets",
+        "recent-transactions",
+        "card-recent-transactions",
+      ].forEach((key) => queryClient.invalidateQueries({ queryKey: [key] }));
       goBack();
     },
     onError: () => {

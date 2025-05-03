@@ -17,7 +17,7 @@ import { createCardSchema } from "@/lib/validation-schema/client";
 import { createCard } from "@/services/wallets";
 import { CreateDataFormData } from "@/types/wallet";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -26,8 +26,7 @@ type CreateCardProps = {
 };
 
 export const CreateCard = ({ updateSection }: CreateCardProps) => {
-  const { user } = useDashboard();
-  const queryClient = useQueryClient();
+  const { user, updateState } = useDashboard();
 
   const {
     register,
@@ -40,9 +39,11 @@ export const CreateCard = ({ updateSection }: CreateCardProps) => {
 
   const { mutate: createCardFn, isPending } = useMutation({
     mutationFn: createCard,
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success(`Card created sucessfully!`);
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      updateState({
+        user: data.profile,
+      });
       goBack();
     },
     onError: () => {
