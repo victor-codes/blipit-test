@@ -95,20 +95,9 @@ Blip-It — Wallet Management System
    ```bash
    docker compose up
    ```
+   if successful, your server should be running on [http://localhost:5001/](http://localhost:5001/)
 
-## Step 2: Configure Your Environment
-
-Customize your Blnk server using the `blnk.json` file. Key configurations include:([docs.blnkfinance.com][2])
-
-- **Project Name**: Identifies your Blnk project.
-- **Data Source**: PostgreSQL connection string.
-- **Redis**: Redis connection string.
-- **Server**: Domain, SSL settings, and port.
-- **Notification**: Slack webhook URL for notifications.([GitHub][3])
-
-Ensure all services are correctly configured and running.
-
-## Step 3: Create Your First Ledger
+## Step 2: Create Your a Ledger
 
 In Blnk, a ledger groups and manages balances. By default, a **General Ledger** is created during installation. To create additional ledgers:
 
@@ -158,7 +147,7 @@ Send a POST request to create a new ledger:
 
 This response confirms the successful creation of your ledger. Save the `ledger_id` in your env file
 
-## Step 4: Database Migrations with Supabase
+## Step 3: Database Migrations with Supabase
 
 This project uses Supabase for database management. Database migrations are stored in the `supabase/migrations` directory.
 
@@ -176,12 +165,6 @@ This project uses Supabase for database management. Database migrations are stor
    supabase start
    ```
 
-   <!-- 2. **Apply pending migrations** (first time only):
-      ```bash
-      supabase login
-      supabase link --project-ref your-project-ref
-      ```
-      (Get your project ref from your Supabase project settings) -->
 
 3. **Reset and apply migrations**:
    ```bash
@@ -194,7 +177,7 @@ This project uses Supabase for database management. Database migrations are stor
 
 ### Want to use your remote supabase project?
 
-1. Make sure supabase globally, if not, prepend you commands with your perferred package manager eg `bun run supabase .....`
+1. Make sure supabase is installed globally, if not, prepend you commands with your perferred package manager eg `bun run supabase .....`
 
 2. Link your project
 
@@ -219,7 +202,6 @@ This project uses Supabase for database management. Database migrations are stor
 - `SUPABASE_URL` - Your Supabase project URL
 - `SUPABASE_ANON_KEY` - Supabase anon/public key
 - `BLNK_INSTANCE_API_URL` - Used for API rewrites in `next.config.ts`
-
 - (See `.env.example` for all required variables)
 
 ## Scripts
@@ -253,7 +235,7 @@ Custom API routes are defined under `app/api/`:
 The database (see `database.types.ts`) includes:
 
 - **profiles**: User profile data
-- **Cards**: User tokenized card details (card_number, etc.)
+- **cards**: User tokenized card details (card_number, etc.)
 
 All types are strongly typed and available for import.
 
