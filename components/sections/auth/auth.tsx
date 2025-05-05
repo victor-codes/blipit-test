@@ -20,9 +20,7 @@ export default function AuthPage() {
     resolver: zodResolver(
       isExistingUser !== false ? existingUserSchema : newUserSchema
     ),
-    defaultValues: {
-      // email: "ayodejiv5@gmail.com",
-    },
+
     mode: "onChange",
   });
 
