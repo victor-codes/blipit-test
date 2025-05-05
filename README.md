@@ -76,24 +76,17 @@ Blip-It — Wallet Management System
 
    ```json
    {
-     "project_name": "Blnk",
-     "data_source": {
-       "dns": "postgres://postgres:password@postgres:5432/blnk?sslmode=disable"
-     },
-     "redis": {
-       "dns": "redis:6379"
-     },
-     "server": {
-       "domain": "blnk.io",
-       "ssl": false,
-       "ssl_email": "you@example.com",
-       "port": "5001"
-     },
-     "notification": {
-       "slack": {
-         "webhook_url": "https://hooks.slack.com/services/your/webhook/url"
-       }
-     }
+   "project_name": "Blnk",
+   "data_source": {
+    "dns": "postgres://postgres:password@postgres:5432/blnk?sslmode=disable"
+   },
+   "redis": {
+    "dns": "redis:6379"
+   },
+   "server": {
+    "port": "5001"
+
+
    }
    ```
 
@@ -172,39 +165,44 @@ This project uses Supabase for database management. Database migrations are stor
 ### Running Migrations Locally
 
 1. **Install Supabase CLI** (if not already installed):
+
    ```bash
    bun add -g supabase
    ```
 
 2. **Start Supabase local instance**:
+
    ```bash
    supabase start
    ```
-<!-- 2. **Apply pending migrations** (first time only):
-   ```bash
-   supabase login
-   supabase link --project-ref your-project-ref
-   ```
-   (Get your project ref from your Supabase project settings) -->
+
+   <!-- 2. **Apply pending migrations** (first time only):
+      ```bash
+      supabase login
+      supabase link --project-ref your-project-ref
+      ```
+      (Get your project ref from your Supabase project settings) -->
 
 3. **Reset and apply migrations**:
    ```bash
    supabase db reset
    ```
-<!-- 3. **Apply pending migrations**:
-   ```bash
-   supabase db reset
-   ``` -->
+   <!-- 3. **Apply pending migrations**:
+      ```bash
+      supabase db reset
+      ``` -->
 
 ### Want to use your remote supabase project?
 
- 1. Make sure supabase globally, if not, prepend you commands with your perferred package manager eg `bun run supabase .....`
+1. Make sure supabase globally, if not, prepend you commands with your perferred package manager eg `bun run supabase .....`
 
 2. Link your project
-    ```bash
+
+   ```bash
    supabase login
    supabase link --project-ref your-project-ref
    ```
+
    (Get your project ref from your Supabase project settings)
 
 3. **Reset and apply migrations**:
