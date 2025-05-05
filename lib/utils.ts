@@ -1,8 +1,9 @@
+import { StatusType } from "@blnkfinance/blnk-typescript/dist/src/types/transactions";
 import { clsx, type ClassValue } from "clsx";
+import { Activity, CreditCard, Home, Settings } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import { APP_CURRENCY } from "./contants";
-import { Home, CreditCard, Activity, Settings } from "lucide-react";
-import { StatusType } from "@blnkfinance/blnk-typescript/dist/src/types/transactions";
+// import { formatPhoneNumberIntl } from "react-phone-number-input";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -39,21 +40,6 @@ export const formatDate = (timestamp: number): string => {
 export const generateReference = (type: "dep" | "wdr" | "trf") =>
   `${type}-${crypto.randomUUID()}`;
 
-export const maskedPhoneNumber = (phone: string) => {
-  // Remove the country code for Nigeria: if phone starts with "+234", remove it and prepend a "0"
-  if (phone.startsWith("+234")) {
-    phone = "0" + phone.slice(4);
-  }
-
-  const masked = phone.replace(/\d(?=\d{2})/g, "•");
-
-  const formatted = masked.replace(/(.{4})(.{3})(.+)/, "$1$2 $3");
-
-  return formatted;
-};
-
-
-
 export const NAVIGATION_LIST = [
   { icon: Home, label: "Home", href: "/" },
   { icon: CreditCard, label: "Cards", href: "/cards" },
@@ -79,4 +65,8 @@ export const StatusTextMap: Record<StatusType, string> = {
   VOID: "Void",
   INFLIGHT: "In Flight",
   EXPIRED: "Expired",
+};
+
+export const zeroPad = (value: number) => {
+  return value < 10 ? `0${value}` : `${value}`;
 };

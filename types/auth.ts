@@ -1,16 +1,17 @@
 import { Database } from "@/database.types";
 import { AUTH_FLOW } from "@/lib/contants";
 import {
+  Control,
   FieldErrors,
   UseFormHandleSubmit,
   UseFormRegister,
   UseFormReset,
+  UseFormSetValue,
 } from "react-hook-form";
 
 export type FormDataValues = {
   email: string;
   phone: string;
-  country_code: string;
 };
 
 export type UpdateUserFormDataValues = {
@@ -28,19 +29,19 @@ export type UpdateUserFormDataValues = {
 };
 
 export type FormAuthProps = {
-  errors: FieldErrors<FormDataValues>;
+  // errors: FieldErrors<FormDataValues>;
   isExistingUser: boolean | null;
-  isDisabled: boolean;
-  register: UseFormRegister<FormDataValues>;
+  // isDisabled: boolean;
+  // register: UseFormRegister<FormDataValues>;
   setIsExistingUser: React.Dispatch<React.SetStateAction<boolean | null>>;
   setFlow: React.Dispatch<React.SetStateAction<AUTH_FLOW>>;
-  reset: UseFormReset<FormDataValues>;
-  watchPhoneCode: string;
-  handleSubmit: UseFormHandleSubmit<FormDataValues>;
+  // reset: UseFormReset<FormDataValues>;
+  // handleSubmit: UseFormHandleSubmit<FormDataValues>;
+  // setValue: UseFormSetValue<FormDataValues>;
 };
 
 export type OTPAuthProps = {
-  watchEmail: string;
+  // watchEmail: string;
   back: () => void;
 };
 

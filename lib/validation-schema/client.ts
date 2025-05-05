@@ -1,31 +1,14 @@
 import { FormDataValues } from "@/types/auth";
+import { isValidPhoneNumber } from "react-phone-number-input";
 import { ZodType, z } from "zod";
+import { isAtLeastAge } from "./common";
 
-export const isAtLeastAge = (minAge: number) => {
-  return (date: Date) => {
-    if (!(date instanceof Date)) return false;
-
-    const today = new Date();
-    const birthDate = new Date(date);
-
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDifference = today.getMonth() - birthDate.getMonth();
-
-    if (
-      monthDifference < 0 ||
-      (monthDifference === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
-
-    return age >= minAge;
-  };
-};
 
 export const newUserSchema: ZodType<FormDataValues> = z.object({
   email: z.string().email(),
-  phone: z.string().min(10, "Phone number is required"),
-  country_code: z.string().readonly(),
+  phone: z.string().refine((value) => isValidPhoneNumber(value), {
+    message: "Invalid phone number",
+  }),
 });
 
 export const updateUserSchema = z.object({

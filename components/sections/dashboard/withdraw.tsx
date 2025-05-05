@@ -7,6 +7,7 @@ import {
   FormAction,
   FormColumn,
   FormDesc,
+  FormErrorText,
   FormHeader,
   FormTitle,
   FormWrapper,
@@ -54,9 +55,11 @@ export const Withdraw = ({ updateSection }: WithdrawProps) => {
     mutationFn: withdrawToWallet,
     onSuccess: () => {
       toast.success(`Withdrawal successful!`);
-      ["recent-transactions", "wallets"].forEach((key) =>
-        queryClient.refetchQueries({ queryKey: [key] })
-      );
+
+      queryClient.refetchQueries({ queryKey: ["wallets"] });
+      queryClient.refetchQueries({ queryKey: ["recent-transactions"] });
+
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
       goBack();
     },
     onError: (error) => {
@@ -114,14 +117,14 @@ export const Withdraw = ({ updateSection }: WithdrawProps) => {
                       const parsed = parseFloat(raw);
                       field.onChange(isNaN(parsed) ? 0 : parsed);
                     }}
-                    aria-invalid={errors.amount ? "true" : "false"}
+                    aria-invalid={!!errors.amount}
                   />
                 )}
               />
               {errors.amount && (
-                <p className="text-sm text-destructive mt-1">
+                <FormErrorText className="text-sm text-destructive mt-1">
                   {errors.amount.message}
-                </p>
+                </FormErrorText>
               )}
             </FormColumn>
 

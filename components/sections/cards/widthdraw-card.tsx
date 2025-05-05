@@ -6,6 +6,7 @@ import {
   FormAction,
   FormColumn,
   FormDesc,
+  FormErrorText,
   FormHeader,
   FormTitle,
   FormWrapper,
@@ -46,14 +47,16 @@ export const WithdrawCard = ({ updateSection }: FundCardProps) => {
     mutationFn: withdrawToWallet,
     onSuccess: () => {
       toast.success(`Transfer successful!`);
+
+      ["card-wallet", "wallets", "card-recent-transactions"].forEach((key) =>
+        queryClient.refetchQueries({ queryKey: [key] })
+      );
       [
-        "card-wallet",
-        "wallets",
-        "card-recent-transactions",
         "recent-transactions",
-      ].forEach((key) => {
-        queryClient.refetchQueries({ queryKey: [key] });
-      });
+        "card-transactions",
+        "transactions",
+        "card-recent-transactions",
+      ].forEach((key) => queryClient.invalidateQueries({ queryKey: [key] }));
 
       goBack();
     },
@@ -118,9 +121,7 @@ export const WithdrawCard = ({ updateSection }: FundCardProps) => {
               )}
             />
             {errors.amount && (
-              <p className="text-sm text-destructive mt-1">
-                {errors.amount.message}
-              </p>
+              <FormErrorText>{errors.amount.message}</FormErrorText>
             )}
           </FormColumn>
 

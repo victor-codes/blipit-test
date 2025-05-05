@@ -1,18 +1,12 @@
 import { z } from "zod";
-import { isAtLeastAge } from "./client";
+import { isAtLeastAge } from "./common";
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 export const ServerUserSchema = z.object({
   email: z.string().email(),
-  phone_number: z
-    .string()
-    .min(7)
-    .max(15)
-    .regex(/^\d+$/, "Invalid phone number"),
-  country_code: z
-    .string()
-    .min(1)
-    .max(5)
-    .regex(/^\+\d+$/, "Invalid country code"),
+  phone_number: z.string().refine((value) => isValidPhoneNumber(value), {
+    message: "Invalid phone number",
+  }),
 });
 
 export const ServerLoginSchema = z.object({

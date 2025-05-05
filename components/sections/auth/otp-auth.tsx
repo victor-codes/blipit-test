@@ -5,17 +5,20 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import Spinner from "@/components/ui/spinner";
-import { confirmOTP } from "@/services/auth";
+import { zeroPad } from "@/lib/utils";
+import { confirmOTP, resendOTP } from "@/services/auth";
 import { OTPAuthProps } from "@/types/auth";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
+import { useTimer } from "react-timer-hook";
 
-export const OTPAuth = ({ watchEmail, back }: OTPAuthProps) => {
+export const OTPAuth = ({ back }: OTPAuthProps) => {
   const router = useRouter();
 
-  const { mutate: createUserFn, isPending } = useMutation({
+  const { mutate: verifyFn, isPending } = useMutation({
     mutationFn: confirmOTP,
     onSuccess: () => {
       router.replace("/");
@@ -26,8 +29,27 @@ export const OTPAuth = ({ watchEmail, back }: OTPAuthProps) => {
     },
   });
 
+  const { mutate: resendFn, isPending: isResendPending } = useMutation({
+    mutationFn: resendOTP,
+    onSuccess: () => {
+      router.replace("/");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+      console.error("Error resending", error);
+    },
+  });
+
+  const { watch } = useFormContext();
+
+  const watchEmail = watch("email");
+
   const handleOnComplete = (value: string) => {
-    createUserFn({ email: watchEmail, otp_code: value });
+    verifyFn({ email: watchEmail, otp_code: value });
+  };
+
+  const handleResendOTP = async () => {
+    resendFn({ email: watchEmail });
   };
 
   return (
@@ -55,7 +77,7 @@ export const OTPAuth = ({ watchEmail, back }: OTPAuthProps) => {
                 </p>
               </div>
 
-              <div className="flex items-center justify-center mx-auto">
+              <div className="flex items-center justify-center mx-auto h-14">
                 {!isPending ? (
                   <InputOTP
                     maxLength={6}
@@ -77,12 +99,44 @@ export const OTPAuth = ({ watchEmail, back }: OTPAuthProps) => {
                 )}
               </div>
             </div>
-            <Button variant="ghost" size="sm" className="block mx-auto">
-              Resend code
-            </Button>
+            <Timer cb={handleResendOTP} loading={isResendPending} />
           </div>
         </main>
       </div>
     </>
+  );
+};
+
+const Timer = ({ cb, loading }: { cb: () => void; loading: boolean }) => {
+  const newStamp = 45 * 1000;
+  const expiry = new Date(Date.now() + newStamp);
+
+  const { seconds, minutes, isRunning, restart } = useTimer({
+    expiryTimestamp: expiry,
+    autoStart: true,
+  });
+
+  const handleResend = () => {
+    if (loading) return;
+    const newExpiry = new Date(Date.now() + newStamp);
+    restart(newExpiry, true);
+    cb();
+  };
+
+  return isRunning ? (
+    <div className="flex items-center justify-center mx-auto h-8 max-w-[300px]">
+      <p>
+        Resend in {zeroPad(minutes)}:{zeroPad(seconds)}
+      </p>
+    </div>
+  ) : (
+    <Button
+      variant="ghost"
+      size="sm"
+      className="block mx-auto"
+      onClick={handleResend}
+    >
+      Resend code
+    </Button>
   );
 };

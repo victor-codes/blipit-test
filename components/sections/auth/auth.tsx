@@ -8,7 +8,7 @@ import {
 import { FormDataValues } from "@/types/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { FormAuth } from "./form-auth";
 import { OTPAuth } from "./otp-auth";
 
@@ -16,23 +16,15 @@ export default function AuthPage() {
   const [flow, setFlow] = useState<AUTH_FLOW>(AUTH_FLOW.FORM);
   const [isExistingUser, setIsExistingUser] = useState<boolean | null>(null);
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    reset,
-    formState: { errors, isDirty, isValid },
-  } = useForm<FormDataValues>({
+  const methods = useForm<FormDataValues>({
     resolver: zodResolver(
       isExistingUser !== false ? existingUserSchema : newUserSchema
     ),
     defaultValues: {
-      country_code: "+234",
+      // email: "ayodejiv5@gmail.com",
     },
+    mode: "onChange",
   });
-
-  const watchEmail = watch("email");
-  const watchPhoneCode = watch("country_code");
 
   const isFormFlow = flow === AUTH_FLOW.FORM;
 
@@ -40,24 +32,18 @@ export default function AuthPage() {
     setFlow(AUTH_FLOW.FORM);
   };
   return (
-    <>
+    <FormProvider {...methods}>
       {isFormFlow ? (
         <FormAuth
           {...{
-            errors,
-            isDisabled: !isDirty || !isValid,
             isExistingUser,
             setIsExistingUser,
             setFlow,
-            reset,
-            watchPhoneCode,
-            register,
-            handleSubmit,
           }}
         />
       ) : (
-        <OTPAuth {...{ watchEmail, back }} />
+        <OTPAuth {...{ back }} />
       )}
-    </>
+    </FormProvider>
   );
 }

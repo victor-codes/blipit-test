@@ -2,11 +2,14 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormAction,
+  FormColumn,
   FormDesc,
+  FormErrorText,
   FormHeader,
   FormWrapper,
 } from "@/components/ui/form-blocks";
 import { Input } from "@/components/ui/input";
+import { PhoneNumber } from "@/components/ui/phone-number";
 import { AUTH_FLOW, AUTH_STEP } from "@/lib/contants";
 import { siteConfig } from "@/lib/meta";
 import { createUser, signInUser } from "@/services/auth";
@@ -15,20 +18,22 @@ import { useMutation } from "@tanstack/react-query";
 import { XIcon } from "lucide-react";
 import { LayoutGroup, motion } from "motion/react";
 import { useCallback, useState } from "react";
-import { SubmitHandler } from "react-hook-form";
+import { SubmitHandler, useFormContext } from "react-hook-form";
+import { isValidPhoneNumber } from "react-phone-number-input";
 import { toast } from "sonner";
 
 export const FormAuth = ({
-  // errors,
   isExistingUser,
   setIsExistingUser,
   setFlow,
-  isDisabled,
-  reset,
-  watchPhoneCode,
-  register,
-  handleSubmit,
 }: FormAuthProps) => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors, isDirty, isValid },
+  } = useFormContext<FormDataValues>();
   const [step, setStep] = useState<AUTH_STEP>(AUTH_STEP.EMAIL);
 
   const { mutate: createUserFn, isPending } = useMutation({
@@ -70,20 +75,24 @@ export const FormAuth = ({
       createUserFn({
         email: data.email,
         phone_number: data.phone,
-        country_code: watchPhoneCode,
       });
     }
   };
 
   const resetFields = () => {
     reset({
-      // email: "",
+      email: "",
       phone: "",
-      country_code: "+234",
     });
 
     setIsExistingUser(null);
     setStep(AUTH_STEP.EMAIL);
+  };
+
+  const onPhoneChange = (value: string) => {
+    setValue("phone", value, {
+      shouldValidate: true,
+    });
   };
 
   const btnText = useCallback(() => {
@@ -123,25 +132,21 @@ export const FormAuth = ({
               </motion.div>
 
               {step === AUTH_STEP.DETAILS && (
-                <motion.div
-                  initial={{ y: -28, scale: 0.8, opacity: 0 }}
-                  animate={{ y: 0, scale: 1, opacity: 1 }}
-                  layout="position"
-                  className="relative origin-center"
-                  transition={SPRING}
-                >
-                  <span className="absolute leading-none mt-[0.5px] text-lg top-1/2 transform -translate-y-1/2 left-3">
-                    +234
-                  </span>
-                  <Input
-                    type="tel"
-                    {...register("phone", { required: true })}
-                    placeholder="Phone number"
-                    className="pl-15 text-base leading-none md:text-lg"
-                  />
-                </motion.div>
+                <FormColumn>
+                  <motion.div
+                    initial={{ y: -28, scale: 0.8, opacity: 0 }}
+                    animate={{ y: 0, scale: 1, opacity: 1 }}
+                    layout="position"
+                    className="relative origin-center"
+                    transition={SPRING}
+                  >
+                    <PhoneNumber onChange={onPhoneChange} />
+                  </motion.div>
+                  {errors.phone?.message && (
+                    <FormErrorText>{errors.phone?.message}</FormErrorText>
+                  )}
+                </FormColumn>
               )}
-
               <FormAction>
                 <motion.div
                   layout
@@ -149,7 +154,9 @@ export const FormAuth = ({
                   className="h-14 w-full relative z-10"
                 >
                   <Button
-                    disabled={isPending || isSignInPending || isDisabled}
+                    disabled={
+                      isPending || isSignInPending || !isDirty || !isValid
+                    }
                     isLoading={isPending || isSignInPending}
                     type="submit"
                     className="w-full"

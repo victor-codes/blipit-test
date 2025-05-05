@@ -110,6 +110,11 @@ export const CardRecentTransactions = () => {
     queryKey: ["card-recent-transactions"],
     queryFn: () => fetchRecentTransactions(user?.card_id!),
   });
+
+  if (data.data.length === 0) {
+    return null;
+  }
+  
   return (
     <div className="space-y-3">
       <div className="flex justify-between items-center">

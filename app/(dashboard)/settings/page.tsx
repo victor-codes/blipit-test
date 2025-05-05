@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page";
 import { SettingsItem, SettingsSection } from "@/components/ui/settings";
 import { useDashboard } from "@/contexts/dashboard-context";
-import { maskedPhoneNumber } from "@/lib/utils";
 import { logOut } from "@/services/auth";
 import { HelpCircle, LogOut, MessageCircle, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { formatPhoneNumberIntl } from "react-phone-number-input";
 
 export default function Settings() {
   const router = useRouter();
@@ -35,7 +35,7 @@ export default function Settings() {
         <SettingsItem title="Email" value={user?.email} />
         <SettingsItem
           title="Phone Number"
-          value={maskedPhoneNumber(user?.phone_number!)}
+          value={maskPhoneNumber(user?.phone_number!)}
         />
       </SettingsSection>
 
@@ -54,3 +54,11 @@ export default function Settings() {
     </>
   );
 }
+
+const maskPhoneNumber = (phone: string): string => {
+  const formatted = formatPhoneNumberIntl(phone) || "";
+  const digitsOnly = formatted.replace(/\D/g, "");
+  const lastFour = digitsOnly.slice(-4);
+
+  return `••• •••• ${lastFour}`;
+};

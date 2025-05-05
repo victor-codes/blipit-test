@@ -8,9 +8,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn, dateFormatter } from "@/lib/utils";
-import { isAtLeastAge } from "@/lib/validation-schema/client";
+import { cn } from "@/lib/utils";
+import { isAtLeastAge } from "@/lib/validation-schema/common";
 import { useEffect, useState } from "react";
+import { FormErrorText } from "./form-blocks";
 
 export interface DateOfBirthProps {
   onChange: (date: Date | null) => void;
@@ -118,7 +119,7 @@ export function DateOfBirth({
   }, [day, month, year]);
 
   return (
-    <div className={cn("relative space-y-3", className)}>
+    <div className={cn("relative", className)}>
       <div className="space-y-1">
         <Label htmlFor={id} className="text-base">
           {label} {required && <span className="text-destructive">*</span>}
@@ -166,9 +167,7 @@ export function DateOfBirth({
       </div>
 
       {(error || externalError) && (
-        <div className="absolute left-0 -bottom-3">
-          <p className="text-sm text-destructive">{externalError || error}</p>
-        </div>
+        <FormErrorText>{externalError || error}</FormErrorText>
       )}
     </div>
   );

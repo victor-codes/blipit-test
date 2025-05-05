@@ -1,31 +1,40 @@
+import { useState } from "react";
 import { Input } from "./input";
-
-const formatAmount = (value: string) => {
-  const numeric = value.replace(/,/g, "");
-  if (!numeric || isNaN(Number(numeric))) return "";
-  const [int, dec] = numeric.split(".");
-  const formattedInt = Number(int).toLocaleString("en-US");
-  return dec !== undefined ? `${formattedInt}.${dec}` : formattedInt;
-};
 
 export const NumberInput = ({
   value,
   onChange,
   ...props
-}: React.ComponentProps<"input">) => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value.replace(/[^0-9.]/g, "");
-    const parts = raw.split(".");
-    // Prevent more than one decimal point or more than 2 decimals
-    if (parts.length > 2 || (parts[1] && parts[1].length > 2)) return;
+}: React.ComponentProps<"input"> & {
+  value: number | string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) => {
+  const [rawInput, setRawInput] = useState(String(value ?? ""));
 
-    onChange?.({
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+
+    // Allow only valid input: digits and at most one decimal point
+    if (!/^\d*\.?\d{0,2}$/.test(raw)) return;
+
+    setRawInput(raw);
+
+    const numericValue = parseFloat(raw);
+    onChange({
       ...e,
       target: {
         ...e.target,
-        value: raw,
+        value: isNaN(numericValue) ? "" : numericValue.toString(),
       },
     });
+  };
+
+  const handleBlur = () => {
+    if (!rawInput) return;
+    const [int, dec] = rawInput.split(".");
+    const formatted =
+      Number(int).toLocaleString("en-US") + (dec ? `.${dec}` : "");
+    setRawInput(formatted);
   };
 
   return (
@@ -34,13 +43,13 @@ export const NumberInput = ({
         $
       </span>
       <Input
-        id="amount"
         inputMode="decimal"
         type="text"
         placeholder="0.00"
         className="pl-8"
-        value={formatAmount(String(value))}
+        value={rawInput}
         onChange={handleChange}
+        onBlur={handleBlur}
         {...props}
       />
     </div>

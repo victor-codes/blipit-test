@@ -9,6 +9,7 @@ import {
   Form,
   FormAction,
   FormColumn,
+  FormErrorText,
   FormHeader,
   FormTitle,
   FormWrapper,
@@ -52,9 +53,10 @@ export const Deposit = ({ updateSection }: DepositProps) => {
     mutationFn: depositToWallet,
     onSuccess: () => {
       toast.success(`Cha ching deposit successful!🤑`);
-      ["wallets", "recent-transactions"].forEach((key) => {
-        queryClient.refetchQueries({ queryKey: [key] });
-      });
+      queryClient.refetchQueries({ queryKey: ["recent-transactions"] });
+      queryClient.refetchQueries({ queryKey: ["wallets"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+
       goBack();
     },
     onError: () => {
@@ -118,9 +120,7 @@ export const Deposit = ({ updateSection }: DepositProps) => {
               />
 
               {errors.amount && (
-                <p className="text-sm text-destructive mt-1">
-                  {errors.amount.message}
-                </p>
+                <FormErrorText>{errors.amount.message}</FormErrorText>
               )}
             </FormColumn>
 

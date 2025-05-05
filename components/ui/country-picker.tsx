@@ -37,11 +37,7 @@ export const CountryPicker = ({ value, onChange }: CountryPickerProps) => {
               !value && "text-muted-foreground"
             )}
           >
-            {value
-              ? value
-              : // ? countryList.find((country) => country.nationality === value)
-                //     ?.label
-                "Select country"}
+            {value ?? "Select country"}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>

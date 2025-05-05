@@ -54,6 +54,22 @@ export const confirmOTP = async (payload: any) => {
   }
 };
 
+export const resendOTP = async (payload: any) => {
+  try {
+    const res = await fetch("/api/auth/signin/resend-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const logOut = async () => {
   try {
     const res = await fetch("/api/auth/signout", {

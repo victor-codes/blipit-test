@@ -10,7 +10,7 @@ import {
   FormColumn,
   FormDesc,
   FormHeader,
-  FormWrapper,
+  FormWrapper
 } from "@/components/ui/form-blocks";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,10 +27,10 @@ import { updateUser } from "@/services/user";
 import { UpdateUserFormDataValues } from "@/types/auth";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -56,7 +56,7 @@ const Page = () => {
     onSuccess: (data) => {
       toast.success(data.message);
       updateState({
-        user: data.profile,
+        user: data.user,
       });
 
       router.replace("/");
@@ -151,11 +151,6 @@ const Page = () => {
                   maxYear={2023}
                   label="Date of birth"
                 />
-                {errors.date_of_birth && (
-                  <p className="text-sm text-destructive">
-                    {errors.date_of_birth.message}
-                  </p>
-                )}
               </FormColumn>
             </SetupSection>
 

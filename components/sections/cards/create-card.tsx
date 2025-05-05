@@ -42,7 +42,7 @@ export const CreateCard = ({ updateSection }: CreateCardProps) => {
     onSuccess: (data) => {
       toast.success(`Card created sucessfully!`);
       updateState({
-        user: data.profile,
+        user: data.user,
       });
       goBack();
     },
