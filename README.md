@@ -165,6 +165,57 @@ Send a POST request to create a new ledger:
 
 This response confirms the successful creation of your ledger. Save the `ledger_id` in your env file
 
+## Step 4: Database Migrations with Supabase
+
+This project uses Supabase for database management. Database migrations are stored in the `supabase/migrations` directory.
+
+### Running Migrations Locally
+
+1. **Install Supabase CLI** (if not already installed):
+   ```bash
+   bun add -g supabase
+   ```
+
+2. **Start Supabase local instance**:
+   ```bash
+   supabase start
+   ```
+<!-- 2. **Apply pending migrations** (first time only):
+   ```bash
+   supabase login
+   supabase link --project-ref your-project-ref
+   ```
+   (Get your project ref from your Supabase project settings) -->
+
+3. **Reset and apply migrations**:
+   ```bash
+   supabase db reset
+   ```
+<!-- 3. **Apply pending migrations**:
+   ```bash
+   supabase db reset
+   ``` -->
+
+### Want to use your remote supabase project?
+
+ 1. Make sure supabase globally, if not, prepend you commands with your perferred package manager eg `bun run supabase .....`
+
+2. Link your project
+    ```bash
+   supabase login
+   supabase link --project-ref your-project-ref
+   ```
+   (Get your project ref from your Supabase project settings)
+
+3. **Reset and apply migrations**:
+   ```bash
+   supabase db reset
+   ```
+4. **Push migrations**
+   ```bash
+   supabase db push
+   ```
+
 ## Environment Variables
 
 - `SUPABASE_URL` - Your Supabase project URL
@@ -204,9 +255,7 @@ Custom API routes are defined under `app/api/`:
 The database (see `database.types.ts`) includes:
 
 - **profiles**: User profile data
-- **identities**: Linked identities (e.g., for KYC)
-- **wallets**: User wallets (balance, currency, status)
-- **transactions**: Transaction records
+- **Cards**: User tokenized card details (card_number, etc.)
 
 All types are strongly typed and available for import.
 
