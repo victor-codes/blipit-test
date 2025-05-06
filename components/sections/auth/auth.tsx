@@ -20,7 +20,6 @@ export default function AuthPage() {
     resolver: zodResolver(
       isExistingUser !== false ? existingUserSchema : newUserSchema
     ),
-
     mode: "onChange",
   });
 
@@ -40,7 +39,7 @@ export default function AuthPage() {
           }}
         />
       ) : (
-        <OTPAuth {...{ back }} />
+        <OTPAuth {...{ back, isExistingUser }} />
       )}
     </FormProvider>
   );

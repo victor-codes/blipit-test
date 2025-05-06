@@ -15,13 +15,17 @@ import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 import { useTimer } from "react-timer-hook";
 
-export const OTPAuth = ({ back }: OTPAuthProps) => {
+export const OTPAuth = ({ back, isExistingUser }: OTPAuthProps) => {
   const router = useRouter();
 
   const { mutate: verifyFn, isPending } = useMutation({
     mutationFn: confirmOTP,
     onSuccess: () => {
-      router.replace("/");
+      if (isExistingUser) {
+        router.replace("/");
+      } else {
+        router.replace("/setup");
+      }
     },
     onError: (error) => {
       toast.error(error.message);
@@ -31,9 +35,6 @@ export const OTPAuth = ({ back }: OTPAuthProps) => {
 
   const { mutate: resendFn, isPending: isResendPending } = useMutation({
     mutationFn: resendOTP,
-    onSuccess: () => {
-      router.replace("/");
-    },
     onError: (error) => {
       toast.error(error.message);
       console.error("Error resending", error);

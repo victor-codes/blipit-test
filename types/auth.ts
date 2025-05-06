@@ -1,13 +1,5 @@
 import { Database } from "@/database.types";
 import { AUTH_FLOW } from "@/lib/contants";
-import {
-  Control,
-  FieldErrors,
-  UseFormHandleSubmit,
-  UseFormRegister,
-  UseFormReset,
-  UseFormSetValue,
-} from "react-hook-form";
 
 export type FormDataValues = {
   email: string;
@@ -42,6 +34,7 @@ export type FormAuthProps = {
 
 export type OTPAuthProps = {
   // watchEmail: string;
+  isExistingUser: boolean | null;
   back: () => void;
 };
 

@@ -19,7 +19,6 @@ import { XIcon } from "lucide-react";
 import { LayoutGroup, motion } from "motion/react";
 import { useCallback, useState } from "react";
 import { SubmitHandler, useFormContext } from "react-hook-form";
-import { isValidPhoneNumber } from "react-phone-number-input";
 import { toast } from "sonner";
 
 export const FormAuth = ({
