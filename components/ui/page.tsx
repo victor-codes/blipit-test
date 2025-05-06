@@ -16,12 +16,12 @@ export const PageWrapper = ({ children }: React.ComponentProps<"button">) => {
 export const PageSkeletion = () => {
   return (
     <div className="md:grid md:grid-cols-[15rem_1fr_1rem] min-xl:grid-cols-[20rem_1fr_20rem] h-[100dvh] bg-background no-scrollbar">
-      <div className="hidden h-full w-full max-w-[20rem] md:flex md:flex-col border-r z-50">
+      <div className="hidden h-full w-full max-w-[20rem] md:flex md:flex-col px-4 border-r z-50">
         <div className="pt-16">
           <Skeleton className="h-8 mb-10 w-3/5" />
         </div>
 
-        <div className="flex-1 flex flex-col  space-y-8 md:space-y-20 px-4 py-4">
+        <div className="flex-1 flex flex-col  space-y-8 md:space-y-20 py-4">
           <div />
 
           <div className="md:space-y-1">

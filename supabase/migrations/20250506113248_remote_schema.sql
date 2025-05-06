@@ -68,7 +68,7 @@ BEGIN
   -- Attempts to get other fields from raw_user_meta_data JSONB
   -- completed_setup defaults to FALSE via the table definition
   -- identity defaults to NULL via the table definition
-  INSERT INTO public.profiles (id, email, first_name, last_name, phone_number, identity_id, wallet_id, card_wallet_id)
+  INSERT INTO public.profiles (id, email, first_name, last_name, phone_number, identity_id, wallet_id, card_id)
   VALUES (
     NEW.id,
     NEW.email,
@@ -77,7 +77,7 @@ BEGIN
     NEW.raw_user_meta_data ->> 'phone_number',
     NEW.raw_user_meta_data ->> 'identity_id',
     NEW.raw_user_meta_data ->> 'wallet_id',
-    NEW.raw_user_meta_data ->> 'card_wallet_id'
+    NEW.raw_user_meta_data ->> 'card_id'
     -- identity is not listed here, it will use the DEFAULT value (NULL)
     -- completed_setup is not listed here, it will use the DEFAULT value (false)
   );
@@ -119,7 +119,7 @@ SET default_table_access_method = "heap";
 
 
 CREATE TABLE IF NOT EXISTS "public"."cards" (
-    "id" "uuid" NOT NULL,
+    "id" "uuid" DEFAULT "auth"."uid"() NOT NULL,
     "tokenized_number" "text" NOT NULL,
     "tokenized_cvv" "text" NOT NULL,
     "card_name" "text" NOT NULL,
@@ -141,7 +141,7 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "phone_number" "text",
     "identity_id" "text",
     "wallet_id" "text",
-    "card_wallet_id" "text",
+    "card_id" "text",
     "identity" "jsonb",
     "completed_setup" boolean DEFAULT false NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
@@ -184,7 +184,7 @@ COMMENT ON COLUMN "public"."profiles"."wallet_id" IS 'Unique identifier for the 
 
 
 
-COMMENT ON COLUMN "public"."profiles"."card_wallet_id" IS 'Unique identifier for the user''s card-based wallet or payment profile (card_id).';
+COMMENT ON COLUMN "public"."profiles"."card_id" IS 'Unique identifier for the user''s card-based wallet or payment profile (card_id).';
 
 
 
@@ -210,7 +210,7 @@ ALTER TABLE ONLY "public"."cards"
 
 
 ALTER TABLE ONLY "public"."profiles"
-    ADD CONSTRAINT "profiles_card_wallet_id_key" UNIQUE ("card_wallet_id");
+    ADD CONSTRAINT "profiles_card_id_key" UNIQUE ("card_id");
 
 
 
@@ -269,10 +269,6 @@ CREATE POLICY "Allow individual read access on cards" ON "public"."cards" FOR SE
 
 
 CREATE POLICY "Allow individual read access on profiles" ON "public"."profiles" FOR SELECT USING (("auth"."uid"() = "id"));
-
-
-
-CREATE POLICY "Allow individual update access on cards" ON "public"."cards" FOR UPDATE TO "authenticated" USING (("id" = "auth"."uid"())) WITH CHECK (("id" = "auth"."uid"()));
 
 
 

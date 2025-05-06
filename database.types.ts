@@ -25,7 +25,7 @@ export type Database = {
           card_name: string
           created_at?: string
           expiry_date: string
-          id: string
+          id?: string
           tokenized_cvv: string
           tokenized_number: string
           zip_code?: string | null
@@ -44,7 +44,7 @@ export type Database = {
       }
       profiles: {
         Row: {
-          card_wallet_id: string | null
+          card_id: string | null
           completed_setup: boolean
           created_at: string
           email: string
@@ -58,7 +58,7 @@ export type Database = {
           wallet_id: string | null
         }
         Insert: {
-          card_wallet_id?: string | null
+          card_id?: string | null
           completed_setup?: boolean
           created_at?: string
           email: string
@@ -72,7 +72,7 @@ export type Database = {
           wallet_id?: string | null
         }
         Update: {
-          card_wallet_id?: string | null
+          card_id?: string | null
           completed_setup?: boolean
           created_at?: string
           email?: string
