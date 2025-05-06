@@ -63,6 +63,11 @@ CREATE OR REPLACE FUNCTION "public"."handle_new_user"() RETURNS "trigger"
     SET "search_path" TO 'public'
     AS $$
 BEGIN
+  -- Insert a new row into public.profiles
+  -- Uses id, email from the new auth.users record
+  -- Attempts to get other fields from raw_user_meta_data JSONB
+  -- completed_setup defaults to FALSE via the table definition
+  -- identity defaults to NULL via the table definition
   INSERT INTO public.profiles (id, email, first_name, last_name, phone_number, identity_id, wallet_id, card_wallet_id)
   VALUES (
     NEW.id,
@@ -73,7 +78,8 @@ BEGIN
     NEW.raw_user_meta_data ->> 'identity_id',
     NEW.raw_user_meta_data ->> 'wallet_id',
     NEW.raw_user_meta_data ->> 'card_wallet_id'
-
+    -- identity is not listed here, it will use the DEFAULT value (NULL)
+    -- completed_setup is not listed here, it will use the DEFAULT value (false)
   );
   -- Note: created_at and updated_at also get their DEFAULT values (now())
   RETURN NEW;
@@ -114,10 +120,10 @@ SET default_table_access_method = "heap";
 
 CREATE TABLE IF NOT EXISTS "public"."cards" (
     "id" "uuid" NOT NULL,
-    "tokenized_number" "text",
-    "tokenized_cvv" "text",
-    "card_name" "text",
-    "expiry_date" "text",
+    "tokenized_number" "text" NOT NULL,
+    "tokenized_cvv" "text" NOT NULL,
+    "card_name" "text" NOT NULL,
+    "expiry_date" "text" NOT NULL,
     "billing_address" "text",
     "zip_code" "text"
 );

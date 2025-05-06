@@ -54,6 +54,7 @@ export const FormAuth = ({
 
     onSuccess: () => {
       if (step === AUTH_STEP.EMAIL) {
+        setIsExistingUser(true);
         setFlow(AUTH_FLOW.OTP);
         return;
       }
