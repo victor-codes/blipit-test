@@ -63,11 +63,7 @@ CREATE OR REPLACE FUNCTION "public"."handle_new_user"() RETURNS "trigger"
     SET "search_path" TO 'public'
     AS $$
 BEGIN
-  -- Insert a new row into public.profiles
-  -- Uses id, email from the new auth.users record
-  -- Attempts to get other fields from raw_user_meta_data JSONB
-  -- completed_setup defaults to FALSE via the table definition
-  INSERT INTO public.profiles (id, email, first_name, last_name, phone_number, identity_id, wallet_id)
+  INSERT INTO public.profiles (id, email, first_name, last_name, phone_number, identity_id, wallet_id, card_wallet_id)
   VALUES (
     NEW.id,
     NEW.email,
@@ -75,8 +71,9 @@ BEGIN
     NEW.raw_user_meta_data ->> 'last_name',
     NEW.raw_user_meta_data ->> 'phone_number',
     NEW.raw_user_meta_data ->> 'identity_id',
-    NEW.raw_user_meta_data ->> 'wallet_id'
-    -- completed_setup is not listed here, it will use the DEFAULT value (false)
+    NEW.raw_user_meta_data ->> 'wallet_id',
+    NEW.raw_user_meta_data ->> 'card_wallet_id'
+
   );
   -- Note: created_at and updated_at also get their DEFAULT values (now())
   RETURN NEW;
@@ -87,7 +84,7 @@ $$;
 ALTER FUNCTION "public"."handle_new_user"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."handle_new_user"() IS 'Trigger function to automatically create a user profile upon new Supabase auth user creation, potentially populating fields from metadata. completed_setup defaults to false.';
+COMMENT ON FUNCTION "public"."handle_new_user"() IS 'Trigger function to automatically create a user profile upon new Supabase auth user creation, potentially populating fields from metadata. identity defaults to NULL, completed_setup defaults to false.';
 
 
 
@@ -96,7 +93,6 @@ CREATE OR REPLACE FUNCTION "public"."handle_profile_update"() RETURNS "trigger"
     AS $$
 BEGIN
   -- Set the updated_at column to the current time only if data has changed
-  -- This prevents the trigger from firing unnecessarily if the update didn't change any values
   IF (NEW IS DISTINCT FROM OLD) THEN
      NEW.updated_at = now();
   END IF;
@@ -117,22 +113,17 @@ SET default_table_access_method = "heap";
 
 
 CREATE TABLE IF NOT EXISTS "public"."cards" (
-    "id" "uuid" DEFAULT "auth"."uid"() NOT NULL,
-    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "tokenized_number" "text" NOT NULL,
-    "tokenized_cvv" "text" NOT NULL,
-    "expiry_date" "text" NOT NULL,
+    "id" "uuid" NOT NULL,
+    "tokenized_number" "text",
+    "tokenized_cvv" "text",
+    "card_name" "text",
+    "expiry_date" "text",
     "billing_address" "text",
-    "zip_code" "text",
-    "card_name" "text"
+    "zip_code" "text"
 );
 
 
 ALTER TABLE "public"."cards" OWNER TO "postgres";
-
-
-COMMENT ON COLUMN "public"."cards"."card_name" IS 'Nickname of the card';
-
 
 
 CREATE TABLE IF NOT EXISTS "public"."profiles" (
@@ -143,17 +134,18 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "phone_number" "text",
     "identity_id" "text",
     "wallet_id" "text",
+    "card_wallet_id" "text",
+    "identity" "jsonb",
     "completed_setup" boolean DEFAULT false NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "card_id" "text"
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
 );
 
 
 ALTER TABLE "public"."profiles" OWNER TO "postgres";
 
 
-COMMENT ON TABLE "public"."profiles" IS 'Stores user profile information, linking Supabase Auth users to application-specific data, including identity, wallet IDs, and setup status.';
+COMMENT ON TABLE "public"."profiles" IS 'Stores user profile information, linking Supabase Auth users to application-specific data, including identity details, wallet IDs, card wallet ID, and setup status.';
 
 
 
@@ -177,11 +169,19 @@ COMMENT ON COLUMN "public"."profiles"."phone_number" IS 'User''s phone number (o
 
 
 
-COMMENT ON COLUMN "public"."profiles"."identity_id" IS 'Unique identifier for the user''s identity verification (e.g., from an identity provider).';
+COMMENT ON COLUMN "public"."profiles"."identity_id" IS 'Unique identifier for the user''s identity verification (e.g., from an external identity provider).';
 
 
 
 COMMENT ON COLUMN "public"."profiles"."wallet_id" IS 'Unique identifier for the user''s crypto wallet or similar financial identifier.';
+
+
+
+COMMENT ON COLUMN "public"."profiles"."card_wallet_id" IS 'Unique identifier for the user''s card-based wallet or payment profile (card_id).';
+
+
+
+COMMENT ON COLUMN "public"."profiles"."identity" IS 'Stores detailed identity information (dob, nationality, gender, address) in JSONB format. Defaults to NULL.';
 
 
 
@@ -197,27 +197,13 @@ COMMENT ON COLUMN "public"."profiles"."updated_at" IS 'Timestamp when the profil
 
 
 
-COMMENT ON COLUMN "public"."profiles"."card_id" IS 'Unique identifier for the user''s card-based wallet or payment profile.';
-
-
-
 ALTER TABLE ONLY "public"."cards"
     ADD CONSTRAINT "cards_pkey" PRIMARY KEY ("id");
 
 
 
-ALTER TABLE ONLY "public"."cards"
-    ADD CONSTRAINT "cards_tokenized_cvv_key" UNIQUE ("tokenized_cvv");
-
-
-
-ALTER TABLE ONLY "public"."cards"
-    ADD CONSTRAINT "cards_tokenized_number_key" UNIQUE ("tokenized_number");
-
-
-
 ALTER TABLE ONLY "public"."profiles"
-    ADD CONSTRAINT "profiles_card_wallet_id_key" UNIQUE ("card_id");
+    ADD CONSTRAINT "profiles_card_wallet_id_key" UNIQUE ("card_wallet_id");
 
 
 
@@ -250,12 +236,7 @@ COMMENT ON TRIGGER "on_profile_updated" ON "public"."profiles" IS 'Calls handle_
 
 
 ALTER TABLE ONLY "public"."cards"
-    ADD CONSTRAINT "cards_id_fkey" FOREIGN KEY ("id") REFERENCES "public"."profiles"("id") ON UPDATE CASCADE ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "public"."cards"
-    ADD CONSTRAINT "cards_id_fkey1" FOREIGN KEY ("id") REFERENCES "auth"."users"("id") ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT "cards_id_fkey" FOREIGN KEY ("id") REFERENCES "auth"."users"("id") ON DELETE CASCADE;
 
 
 
@@ -264,7 +245,19 @@ ALTER TABLE ONLY "public"."profiles"
 
 
 
+CREATE POLICY "Allow individual delete access on cards" ON "public"."cards" FOR DELETE TO "authenticated" USING (("id" = "auth"."uid"()));
+
+
+
 CREATE POLICY "Allow individual delete access on profiles" ON "public"."profiles" FOR DELETE USING (("auth"."uid"() = "id"));
+
+
+
+CREATE POLICY "Allow individual insert access on cards" ON "public"."cards" FOR INSERT TO "authenticated" WITH CHECK (("id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Allow individual read access on cards" ON "public"."cards" FOR SELECT TO "authenticated" USING (("id" = "auth"."uid"()));
 
 
 
@@ -272,15 +265,11 @@ CREATE POLICY "Allow individual read access on profiles" ON "public"."profiles" 
 
 
 
+CREATE POLICY "Allow individual update access on cards" ON "public"."cards" FOR UPDATE TO "authenticated" USING (("id" = "auth"."uid"())) WITH CHECK (("id" = "auth"."uid"()));
+
+
+
 CREATE POLICY "Allow individual update access on profiles" ON "public"."profiles" FOR UPDATE USING (("auth"."uid"() = "id")) WITH CHECK (("auth"."uid"() = "id"));
-
-
-
-CREATE POLICY "Enable insert for users based on user_id" ON "public"."cards" FOR INSERT TO "authenticated" WITH CHECK ((( SELECT "auth"."uid"() AS "uid") = "id"));
-
-
-
-CREATE POLICY "Enable users to view their own data only" ON "public"."cards" FOR SELECT TO "authenticated" USING ((( SELECT "auth"."uid"() AS "uid") = "id"));
 
 
 

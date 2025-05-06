@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typegen": "node scripts/typegen.ts"
+    "typegen": "node scripts/typegen.ts",
+    "gen-token": "ts-node scripts/generate-token.ts"
   },
   "dependencies": {
     "@blnkfinance/blnk-typescript": "^1.0.2",

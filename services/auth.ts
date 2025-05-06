@@ -46,9 +46,12 @@ export const confirmOTP = async (payload: any) => {
       body: JSON.stringify(payload),
     });
 
-    const data = await res.json();
+    if (res.ok) {
+      const data = await res.json();
+      return data;
+    }
 
-    return data;
+    throw new Error("OTP code is invalid or expired!");
   } catch (error) {
     throw error;
   }
@@ -62,9 +65,12 @@ export const resendOTP = async (payload: any) => {
       body: JSON.stringify(payload),
     });
 
-    const data = await res.json();
+    if (res.ok) {
+      const data = await res.json();
+      return data;
+    }
 
-    return data;
+    throw new Error("Error sending OTP, try again");
   } catch (error) {
     throw error;
   }

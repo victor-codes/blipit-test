@@ -95,13 +95,14 @@ Blip-It — Wallet Management System
    ```bash
    docker compose up
    ```
+
    if successful, your server should be running on [http://localhost:5001/](http://localhost:5001/)
 
 ## Step 2: Create Your a Ledger
 
 In Blnk, a ledger groups and manages balances. By default, a **General Ledger** is created during installation. To create additional ledgers:
 
-### Using Blnk CLI
+<!-- ### Using Blnk CLI
 
 1. **Install Blnk CLI**
 
@@ -113,37 +114,37 @@ In Blnk, a ledger groups and manages balances. By default, a **General Ledger** 
 
    ```bash
    blnk ledgers create --name "Wallet Management Account" --meta_data '{"project_owner":"YOUR_APP_NAME"}'
-   ```
+   ``` -->
 
-### Using API
+### Using CURL
 
 Send a POST request to create a new ledger:
 
-- **Endpoint**: `POST http://localhost:5001/ledgers`
+- **Request Body**: Update the request body
 
-- **Request Body**:
-
-```json
-{
-  "name": "Customer Savings Account",
-  "meta_data": {
-    "project_owner": "YOUR_APP_NAME"
-  }
-}
-```
+  ```json
+  curl -X POST http://localhost:5001/ledgers \
+  -H "Content-Type: application/json" \
+  -d '{
+     "name": "Customer Savings Account",
+     "meta_data": {
+        "project_owner": "YOUR_APP_NAME"
+     }
+  }'
+  ```
 
 - **Response**:
 
-```json
-{
-  "ledger_id": "ldg_073f7ffe-9dfd-42ce-aa50-d1dca1788adc",
-  "name": "Customer Savings Account",
-  "created_at": "2024-12-21T01:36:46.997063436Z",
-  "meta_data": {
-    "project_owner": "YOUR_APP_NAME"
+  ```json
+  {
+    "ledger_id": "ldg_073f7ffe-9dfd-42ce-aa50-d1dca1788adc",
+    "name": "Customer Savings Account",
+    "created_at": "2024-12-21T01:36:46.997063436Z",
+    "meta_data": {
+      "project_owner": "YOUR_APP_NAME"
+    }
   }
-}
-```
+  ```
 
 This response confirms the successful creation of your ledger. Save the `ledger_id` in your env file
 
@@ -165,15 +166,15 @@ This project uses Supabase for database management. Database migrations are stor
    supabase start
    ```
 
-
 3. **Reset and apply migrations**:
+
    ```bash
    supabase db reset
    ```
-   <!-- 3. **Apply pending migrations**:
-      ```bash
-      supabase db reset
-      ``` -->
+
+   Running it locally,
+   This project uses, Email + OTP for authentication
+   run `supabase status` to get the supabase `API URL`, `anon key`, and `Inbucket URL` (for emails)
 
 ### Want to use your remote supabase project?
 
@@ -211,6 +212,7 @@ This project uses Supabase for database management. Database migrations are stor
 - `start` - Start production server
 - `lint` - Run ESLint
 - `typegen` - Generate types from database
+- `gen-token` - Generate `TOKENIZATION_KEY` in the env file
 
 ## API Overview
 

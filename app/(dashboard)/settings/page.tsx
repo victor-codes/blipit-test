@@ -58,7 +58,7 @@ export default function Settings() {
 const maskPhoneNumber = (phone: string): string => {
   const formatted = formatPhoneNumberIntl(phone) || "";
   const digitsOnly = formatted.replace(/\D/g, "");
-  const lastFour = digitsOnly.slice(-4);
+  const lastTwo = digitsOnly.slice(-2);
 
-  return `••• •••• ${lastFour}`;
+  return `•••• ••• ••${lastTwo}`;
 };
