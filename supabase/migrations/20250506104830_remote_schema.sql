@@ -125,7 +125,8 @@ CREATE TABLE IF NOT EXISTS "public"."cards" (
     "card_name" "text" NOT NULL,
     "expiry_date" "text" NOT NULL,
     "billing_address" "text",
-    "zip_code" "text"
+    "zip_code" "text",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL
 );
 
 

@@ -13,6 +13,7 @@ export type Database = {
         Row: {
           billing_address: string | null
           card_name: string
+          created_at: string
           expiry_date: string
           id: string
           tokenized_cvv: string
@@ -22,6 +23,7 @@ export type Database = {
         Insert: {
           billing_address?: string | null
           card_name: string
+          created_at?: string
           expiry_date: string
           id: string
           tokenized_cvv: string
@@ -31,6 +33,7 @@ export type Database = {
         Update: {
           billing_address?: string | null
           card_name?: string
+          created_at?: string
           expiry_date?: string
           id?: string
           tokenized_cvv?: string
